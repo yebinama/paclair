@@ -1,16 +1,6 @@
 General:
   clair_url: 'https://localhost:6060'
 Plugins:
-  Elasticsearch:
-    class: paclair.es_plugin.EsPlugin
-    index: 'hbx-confo_factssysinfo'
-    doc_type: 'factssysinfo'
-    hosts:
-      - host: 'my_es_host.com'
-        port: 9200
-        http_auth:
-          - "secret"
-          - "id"
   Docker:
     class: paclair.plugin.docker_plugin.DockerPlugin
     registries:
@@ -22,7 +12,3 @@ Plugins:
         auth:
           - "*****"
           - "*****"
-  Cflinuxfs2:
-    class: paclair.cf_plugin.CfPlugin
-    base_url: 'https://artifactory.registry.com/cloudfoundry_bosh-release_main/cflinuxfs2-rootfs'
-    verify: "/etc/ssl/certs/ca-certificates.crt" 
