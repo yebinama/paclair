@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name="paclair",
-      version="0.4",
+      version="1.0.0",
       description="Push and Ask Clair",
       author="Gregoire UNBEKANDT",
       author_email="gregoire.unbekandt@gmail.com",
@@ -17,7 +17,7 @@ setup(name="paclair",
       command_options={
                'build_sphinx': {
                    'project': ('setup.py', "paclair"),
-                   'version': ('setup.py', "0.4"),
-                   'release': ('setup.py', "0.4"),
+                   'version': ('setup.py', "1.0.0"),
+                   'release': ('setup.py', "1.0.0"),
                    'build_dir': ('setup.py', 'doc/sphinx/_build/')}},
      )
