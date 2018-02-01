@@ -44,7 +44,9 @@ Plugins:
 ```
 
 Plugins are dynamically loaded during execution. That's why you have to specify the class of the plugins you want to use.
+
 We have various plugins to interact with different sources (ex: docker registry, Elasticsearch) because we use a custom variant of Clair which can analyse more than Docker images.
+
 If you want to use Paclair only to analyse docker images, don't bother with others plugins.
 
 Config Option | Description |
@@ -53,7 +55,7 @@ Config Option | Description |
 | General::verify | Either a boolean, in which case it controls whether we verify the server's TLS certificate, or a string, in which case it must be a path to a CA bundle to use. 
 | Plugins | List of plugins to use. If you only want to analyse docker images, keep the default configuration | 
 | Plugins::Docker::class | Class for the docker plugin |
-| Plugins::Docker::registries | Specific configuration for registries (authentification, ...) |
+| Plugins::Docker::registries | You can specify configuration for registries (authentification, ...) if needed|
 | Plugins::Docker::registries::registry1::auth | login/password |
 | Plugins::Docker::registries::registry1::verify | Either a boolean, in which case it controls whether we verify the server's TLS certificate, or a string, in which case it must be a path to a CA bundle to use. |
 | Plugins::Docker::registries::registry1::protocol | Protocol to use (http or https). Default to https |
