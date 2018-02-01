@@ -1,0 +1,149 @@
+{
+   "schemaVersion": 1,
+   "name": "hebex/ubuntu",
+   "tag": "16.04",
+   "architecture": "amd64",
+   "fsLayers": [
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:5e530ab118e05274008baf34b470a56a2273b0349653400410c6a66e98dc0061"
+      },
+      {
+         "blobSum": "sha256:f01836d9fae29e08f1ec1377039152f46fef36627201e2828cb33a60fb33ebac"
+      },
+      {
+         "blobSum": "sha256:1819a55d3931f29312b52d14f1d4e8fb9be94a870f24261168464d0ff5159507"
+      },
+      {
+         "blobSum": "sha256:cdd7b9a0b9a3da1d891f54aab8559a324a210495f2324abbb6ab78ae387ae9db"
+      },
+      {
+         "blobSum": "sha256:1359e66c6258c932de98053676348b8923854079d85697b192684fd9d10a58be"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:ef25dcef04e03fa71fa4837dc77fe0d35f5dcc62a282b1852370848aeb140dce"
+      },
+      {
+         "blobSum": "sha256:64d3843af9ec26cad084b1e517243c3e2a4f309a8471d0e7a282b5c8b6ebbdce"
+      },
+      {
+         "blobSum": "sha256:b36fdace5c59dfc1c02752efd7d6549b4dcb7ca5eb29e1c2b5f79a7a931aa248"
+      },
+      {
+         "blobSum": "sha256:08d02af113c958358618db8f237ce540588a62c590bfd1bbad7eba3eea97a02d"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      {
+         "blobSum": "sha256:cf4e6d5921e259d673f63d820189f85cbfe8d0395f2c622a1a319fcfe33ed300"
+      }
+   ],
+   "history": [
+      {
+         "v1Compatibility": "{\"id\":\"30b2b14f5f514d70ff4b5c98e333cf651f9da3c9bfc535616ad88314901c7d50\",\"parent\":\"22277da65c8c57cf16ff834d9b1eb1b612e589b8a7195368cf722acc30dab9ff\",\"created\":\"2017-06-01T12:09:04.732790017Z\",\"container_config\":{\"Cmd\":[\"/bin/sh -c #(nop)  ENV INITRD=No\"]},\"throwaway\":true}"
+      },
+      {
+         "v1Compatibility": "{\"id\":\"22277da65c8c57cf16ff834d9b1eb1b612e589b8a7195368cf722acc30dab9ff\",\"parent\":\"57f2998f34b508bfe000deac2e07626c4f3637aa342ca9a4d038715bab49cc21\",\"created\":\"2017-06-01T12:09:04.318408113Z\",\"container_config\":{\"Cmd\":[\"/bin/sh -c #(nop)  ENV DEBIAN_FRONTEND=noninteractive\"]},\"throwaway\":true}"
+      },
+      {
+         "v1Compatibility": "{\"id\":\"57f2998f34b508bfe000deac2e07626c4f3637aa342ca9a4d038715bab49cc21\",\"comment\":\"Imported from -\",\"created\":\"2017-06-01T12:09:03.073786858Z\",\"container_config\":{\"Cmd\":[\"\"]}}"
+      }
+   ],
+   "signatures": [
+      {
+         "header": {
+            "jwk": {
+               "crv": "P-256",
+               "kid": "ANEK:UXAR:EKU3:VKZN:4KDI:M772:43ZT:BMZF:2TDI:ZKFK:O6KT:POAY",
+               "kty": "EC",
+               "x": "S5NvjPGjlPDLLf9oGUrNg7RYpZYGLPgO39q2TfsUB3o",
+               "y": "SPv1IMW2YZ1QgW3W3WQXOqWYkYwPWlPkidUVy7co8EI"
+            },
+            "alg": "ES256"
+         },
+         "signature": "N_ewEMskLBwnbvd8KkB-zIkoGbf_W81NBOGRUOHS7k4HJUYizS8swpduTjr0nYfLVYGVpIi7ylTwMaKn-JE8Yg",
+         "protected": "eyJmb3JtYXRMZW5ndGgiOjI0MjA5LCJmb3JtYXRUYWlsIjoiQ24wIiwidGltZSI6IjIwMTctMDYtMDFUMTI6MTA6NTNaIn0"
+      }
+   ]
+}
