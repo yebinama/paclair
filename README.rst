@@ -4,6 +4,7 @@ Paclair
 Paclair is a Python3 Cli tool to interact with Coreos's Clair (https://github.com/coreos/clair).
 
 Features:
+
 - No need to have docker installed since Paclair interacts directly with the registries.
 - Compatible with all registries.
 - Simple to use.
