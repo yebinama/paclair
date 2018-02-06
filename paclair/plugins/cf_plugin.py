@@ -21,13 +21,12 @@ class CfPlugin(AbstractPlugin):
         super().__init__(clair, "cflinuxfs")
         self.base_url = base_url
         self.verify = verify
-        
 
     def push(self, name):
-      rootfs_path = "{}/{}".format(self.base_url, name)
-      result = requests.head(rootfs_path, verify = self.verify)
-      if result.status_code != requests.codes.ok:
-          raise ResourceNotFoundException("{} not found".format(name))
+        rootfs_path = "{}/{}".format(self.base_url, name)
+        result = requests.head(rootfs_path, verify = self.verify)
+        if result.status_code != requests.codes.ok:
+            raise ResourceNotFoundException("{} not found".format(name))
 
-      data = self.clair.to_clair_post_data(name, rootfs_path, self.clair_format)
-      self.clair.post_layer(data)
+        data = self.clair.to_clair_post_data(name, rootfs_path, self.clair_format)
+        self.clair.post_layer(data)
