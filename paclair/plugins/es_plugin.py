@@ -10,20 +10,20 @@ from paclair.exceptions import ResourceNotFoundException
 
 class EsPlugin(AbstractPlugin):
     """
-    Plugin pour elasticsearch
+    Elasticsearch plugin
     """
 
     __SOURCE_URL = "{}/{}/{}/{}/_source?_source_include=sysinfo_clair"
 
     def __init__(self, clair, hosts, index, doc_type, suffix=None, timedelta=None):
         """
-        Constructeur
+        Constructor
 
-        :param clair: object ClairRequest
-        :param hosts: hosts elasticsearch ex:[{'host': '172.18.8.10', 'port': 9200}]
-        :param index: index elasticsearch
-        :param doc_type: doc_type elasticsearch
-        :param suffix: index suffix (ex: index différent par jour)
+        :param clair: ClairRequest object
+        :param hosts: elasticsearch hosts ex:[{'host': '172.18.8.10', 'port': 9200}]
+        :param index: elasticsearch index
+        :param doc_type: elasticsearch doc_type
+        :param suffix: index suffix (ex: one index a day)
         :param timedelta: timedelta from today for suffix
         """
         super().__init__(clair, "Legacy")
@@ -35,11 +35,11 @@ class EsPlugin(AbstractPlugin):
             self.index += (datetime.datetime.today() + datetime.timedelta(**timedelta)).strftime(suffix)
 
     def push(self, name):
-        # Récupération de l'ID
+        # get ID
         search = {"size": 1, "sort": {'@timestamp': "desc"}, "_source": False,
                   "query": {'match_phrase': {'hostname': name}}}
         result = self._es.search(index=self.index, doc_type=self.doc_type, body=search)['hits']
-        # Pas de résultat
+        # no result
         if result['total'] == 0:
             raise ResourceNotFoundException("{} not found".format(name))
 
@@ -52,7 +52,7 @@ class EsPlugin(AbstractPlugin):
         id_name = result['hits'][0]['_id']
         path = self.__SOURCE_URL.format(self._es.transport.get_connection().host, self.index, self.doc_type, id_name)
 
-        # Authentification
+        # Authentication
         auth = self._es.transport.get_connection().session.auth
         if auth is not None:
             digest = "{}:{}".format(*auth)

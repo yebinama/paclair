@@ -19,9 +19,9 @@ class PaClair(LoggedObject):
     """
     def __init__(self, config_file=None):
         """
-        Constructeur
+        Constructor
 
-        :param config_file: fichier de configuration
+        :param config_file: configuration file
         """
         super().__init__()
         self._config_reader = ConfigReader(config_file or DEFAULT_CONFIG_FILE)
@@ -29,19 +29,18 @@ class PaClair(LoggedObject):
 
     def analyse(self, plugin, name, delete=False):
         """
-        Analyse du layer
+        Analyse a layer
 
-        :param plugin: nom du plugin
-        :param name: ressource à analyser
-        :param delete: supprimer le layer après analyse
+        :param plugin: plugin's name
+        :param name: resource to analyse
+        :param delete: delete after analyse
         :return: json clair
-        :raises ResourceNotFoundException: si le layer n'est pas présent dans la base Clair
-        :raise ClairConnectionError: en cas d'erreur de connexion à Clair
+        :raises ResourceNotFoundException: if layer not found
+        :raise ClairConnectionError: if an error occurs requesting Clair
         """
         if plugin not in self._plugins:
             raise PluginNotFoundException("Plugin {} inconnu".format(plugin))
 
-        # Exécution
         self.logger.debug("Analyse de  {}".format(name))
         result = self._plugins[plugin].analyse(name)
         if delete:
@@ -51,25 +50,24 @@ class PaClair(LoggedObject):
 
     def push(self, plugin, name):
         """
-        Push de la ressource sur Clair
+        Push layer to Clair
 
-        :param plugin: nom du plugin
-        :param name: ressource à pousser
+        :param plugin: plugin's name
+        :param name: resource to push
         :return:
         """
         if plugin not in self._plugins:
             raise PluginNotFoundException("Plugin {} inconnu".format(plugin))
 
-        # Exécution
         self.logger.debug("Push de {} avec le plugin {}".format(name, plugin))
         self._plugins[plugin].push(name)
 
     @staticmethod
     def statistics(clair_json):
         """
-        Analyse un json clair pour en sortir des statistiques
+        Statistics from a json delivered by Clair
 
-        :param clair_json: json résultat de clair
+        :param clair_json: json delivered by Clair
         """
         result = {}
         for feature in clair_json.get('Layer', {}).get('Features', []):
@@ -82,9 +80,9 @@ class PaClair(LoggedObject):
 def main():
     """
     Main
-    :return:
+
     """
-    # Création du parser
+    # Create parser
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", help="Debug mode", action="store_true")
     parser.add_argument("--syslog", help="Log to syslog", action="store_true")
@@ -98,10 +96,10 @@ def main():
     parser_analyse = subparsers.add_parser("analyse", help="Analyse images/hosts already pushed to Clair")
     parser_analyse.add_argument("--statistics", help="Only print statistics", action="store_true")
 
-    # Récupération des arguments
+    # Parse args
     args = parser.parse_args()
 
-    # Initialisation du logger
+    # Init logger
     logger = logging.getLogger()
     if args.debug:
         logger.setLevel(level=logging.DEBUG)
@@ -109,7 +107,7 @@ def main():
         logger.setLevel(level=logging.INFO)
 
     if args.syslog:
-        # Formatter du logger
+        # Logger format
         formatter = logging.Formatter(
             'PACLAIR[{}]: ({}) %(levelname).1s %(message)s'.format(os.getpid(), os.getenv('USER')))
         # Syslog Handler

@@ -14,11 +14,12 @@ class PaclairException(Exception):
 
 class ClairConnectionError(PaclairException):
     """
-    Erreur liée à la connexion à l'api de Clair
+    Error reaching Clair
     """
     def __init__(self, response):
         """
-        Constructeur
+        Constructor
+
         :param response: requests.response
         """
         super().__init__(response.reason)
@@ -27,20 +28,20 @@ class ClairConnectionError(PaclairException):
 
 class ResourceNotFoundException(PaclairException):
     """
-    Ressource non trouvée dans le dépôt
+    Resource not found
     """
     pass
 
 
 class PluginNotFoundException(PaclairException):
     """
-    Plugin inconnu
+    Unknown plugin
     """
     pass
 
 
 class RegistryAccessError(PaclairException):
     """
-    Erreur d'accès à la registry
+    Error reaching registry
     """
     pass

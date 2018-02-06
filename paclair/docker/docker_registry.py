@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+
 """
-Module docker_registry
+Docker_registry module
 """
 
 import requests
@@ -10,7 +12,7 @@ from paclair.exceptions import RegistryAccessError
 
 class DockerRegistry(LoggedObject):
     """
-    Classe représentant une registry Docker
+    A Docker Registry
     """
     BASE_API_URL = '{registry.protocol}://{registry.domain}{registry.api_prefix}'
     MANIFEST_URI = '/v2/{image.name}/manifests/{image.tag}'
@@ -19,11 +21,11 @@ class DockerRegistry(LoggedObject):
 
     def __init__(self, domain, token_url=None, api_prefix="", protocol="https", auth=None, verify=True):
         """
-        Initialisation
+        Constructor
 
-        :param api_prefix: préfixe de l'api
-        :param domain: le domaine de la registry (ex : registry.hub.docker.com)
-        :param token_url: url qui permet d'avoir le token de connexion (ex : https://auth.docker.io)
+        :param api_prefix: api prefix
+        :param domain: domain registry (ex : registry.hub.docker.com)
+        :param token_url: token url (ex : https://auth.docker.io)
         :param auth: (user, password)
         :param verify: requests ssl verify
         """
@@ -44,7 +46,7 @@ class DockerRegistry(LoggedObject):
     @property
     def token_url(self):
         """
-        Construction de la token url si non présente, renvoi sinon
+        Find token url if not defined
         """
         if self.__token_url is None:
             url = self.BASE_API_URL.format(registry=self) + "/v2/"
@@ -55,7 +57,7 @@ class DockerRegistry(LoggedObject):
                 self.logger.error("REQUEST_TOKEN:HTTPCODEERROR:{}".format(response.status_code))
                 raise RegistryAccessError("Error access to : {} \nCode Error : {}".format(url, response.status_code))
 
-            # Définition du realm et du service
+            # Find realm and service
             matcher = re.match(self.TOKEN_REGEX, response.headers["www-authenticate"])
             if matcher is None:
                 raise RegistryAccessError("Can't find token url")
@@ -67,49 +69,49 @@ class DockerRegistry(LoggedObject):
 
     def get_base_api_url(self, docker_image):
         """
-        Retourne l'url de base de l'api pour l'image associée
+        Get base api url
 
         :param docker_image: paclair.docker.DockerImage
         :return:
         """
-        # Format pour les attributs de la registry
+        # Format for registry
         url = self.BASE_API_URL.format(registry=self)
-        # Format si des paramètres de l'image sont nécessaire ex: prefix_api=/api/{image.repo}
+        # Format if image's parameters are required ex: prefix_api=/api/{image.repo}
         return url.format(image=docker_image)
 
     def get_manifest_url(self, docker_image):
         """
-        Renvoie l'url du manifest
+        Manifest's url
 
         :param docker_image: paclair.docker.DockerImage
-        :return: l'url du manifest pour l'image
+        :return: manifest's url
         """
         url = self.get_base_api_url(docker_image) + self.MANIFEST_URI.format(image=docker_image)
         return url
 
     def get_blobs_url(self, docker_image, digest):
         """
-        Renvoie l'url du blob digest de l'image docker_image
+        Blobs's url
 
         :param docker_image: paclair.docker.DockerImage
-        :param digest: digest à récupérer
-        :return: l'url du blob digest de l'image docker_image
+        :param digest: digest
+        :return: blobs's url
         """
         url = self.get_base_api_url(docker_image) + self.BLOBS_URI.format(image=docker_image, digest=digest)
         return url
 
     def get_token(self, docker_image):
         """
-        Methode qui génère le token
+        Get token
 
         :param docker_image: paclair.docker.DockerImage
         :returns str:
         """
-        # Création de l'url
+        # Define url
         url = self.token_url.format(registry=self, image=docker_image)
         self.logger.debug("REQUEST_TOKEN:URL:{url}".format(url=url))
 
-        # Interrogation de l'url et récupération du token
+        # Get token
         resp = requests.get(url, verify=self.verify, auth=self.auth)
         if not resp.ok:
             self.logger.error("REQUEST_TOKEN:HTTPCODEERROR:{}".format(resp.status_code))
@@ -122,16 +124,16 @@ class DockerRegistry(LoggedObject):
 
     def get_manifest(self, docker_image):
         """
-        Renvoie le manifest associé à docker_image
+        Get manifest
 
         :param docker_image: paclair.docker.DockerImage
-        :return: manifest associé à l'image
+        :return: manifest
         """
-        # Création de l'url
+        # Define url
         url = self.get_manifest_url(docker_image)
         self.logger.debug("REQUESTMANIFESTS:{url}".format(url=url))
 
-        # Récupération du Token
+        # Get token
         token = self.get_token(docker_image)
         resp = requests.get(url, verify=self.verify, headers={"Authorization": "Bearer {}".format(token)})
 

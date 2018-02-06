@@ -12,16 +12,16 @@ from paclair.plugins.abstract_plugin import AbstractPlugin
 
 class DockerPlugin(AbstractPlugin):
     """
-    Plugin pour Docker
+    Docker plugin
     """
 
     def __init__(self, clair, registries=None):
         """
-        Constructeur
+        Constructor
 
-        :param clair: objet ClairRequests
-        :param registries: configuration des registries {'registry1_domain': {'conf': ...},
-                                                         'registry2_domain': {'conf': ...}}
+        :param clair: ClairRequests object
+        :param registries: registries' configuration {'registry1_domain': {'conf': ...},
+                                                      'registry2_domain': {'conf': ...}}
         """
         super().__init__(clair, "Docker")
         registries = registries or {}
@@ -32,16 +32,16 @@ class DockerPlugin(AbstractPlugin):
 
     def create_docker_image(self, name):
         """
-        Renvoie l'image docker associée à name
+        Create docker image
 
-        :param name: nom de l'image
+        :param name: image's name
         :return: paclair.docker.DockerImage
         """
         matcher = self._pattern.match(name)
         if not matcher:
             raise ResourceNotFoundException("Docker {} introuvable".format(name))
 
-        # Image de base docker
+        # Base docker image
         if matcher.group("domain") is None:
             return DockerImage("library/" + matcher.group("name"), self.__docker_hub,
                                tag=matcher.group("tag") or 'latest')
@@ -52,7 +52,7 @@ class DockerPlugin(AbstractPlugin):
             return DockerImage("{}/{}".format(matcher.group("domain"), matcher.group("name")), self.__docker_hub,
                                tag=matcher.group("tag") or 'latest')
 
-        # Quelle registry supporte mon image?
+        # Find the registry
         repo = ""
         if domain_regex_matcher.group("domain") in self.__registries:
             registry = self.__registries[domain_regex_matcher.group("domain")]
@@ -66,13 +66,13 @@ class DockerPlugin(AbstractPlugin):
     def push(self, name):
         docker_image = self.create_docker_image(name)
 
-        # Données supplémentaires d'envoi
+        # Additional data
         additional_data = {'Headers': {'Authorization': "Bearer {}".format(docker_image.token)},
                            'ParentName': ""}
         layers = docker_image.get_layers()
         partial_path = docker_image.registry.get_blobs_url(docker_image, '{digest}')
 
-        # Envoi vers Clair des layers
+        # Push layers to Clair
         for layer in layers:
             data = self.clair.to_clair_post_data(layer, partial_path.format(digest=layer), self.clair_format,
                                                  **additional_data)

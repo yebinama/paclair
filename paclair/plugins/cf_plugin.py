@@ -7,16 +7,16 @@ from paclair.exceptions import ResourceNotFoundException
 
 class CfPlugin(AbstractPlugin):
     """
-    Plugin pour Cflinuxfs2
+    Cflinuxfs2 plugin
     """
 
     def __init__(self, clair, base_url, verify):
         """
-        Constructeur
+        Constructor
 
-        :param clair: objet ClairRequest
-        :param base_url: chemin pour construire l'url artifactory
-        :param verify: certificats ssl pour artifactory
+        :param clair: ClairRequest object
+        :param base_url: base url
+        :param verify: request verify certificate
         """
         super().__init__(clair, "cflinuxfs")
         self.base_url = base_url

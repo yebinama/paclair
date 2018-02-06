@@ -10,17 +10,17 @@ from paclair.logged_object import LoggedObject
 
 class AbstractPlugin(LoggedObject):
     """
-    Plugin de base
+    Base Plugin
     """
     __metaclass__ = ABCMeta
 
 
     def __init__(self, clair, clair_format):
         """
-        Constructeur
+        Constructor
 
-        :param clair_format: format de la ressource à analyser
-        :param clair: objet ClairRequests
+        :param clair_format: Clair format
+        :param clair: ClairRequests object
         """
         super().__init__()
         self.clair_format = clair_format
@@ -28,25 +28,26 @@ class AbstractPlugin(LoggedObject):
 
     def analyse(self, name):
         """
-        Requête Clair pour analyser name
+        Analyse a resource
 
-        :param name: nom de la ressource à analyser
-        :return: json renvoyé par clair
+        :param name: resource to analyse
+        :return: json from clair
         """
         return self.clair.get_layer(name)
 
     def delete(self, name):
         """
-        Supprime l'entrée name de la base Clair
+        Delete a resource
 
-        :param name: nom de la ressource à supprimer
+        :param name: resource's name
         """
         self.clair.delete_layer(name)
 
     @abstractmethod
     def push(self, name):
         """
-        Pousse dans Clair la ressource name
-        :param name: nom de la ressource
+        Push to Clair
+
+        :param name: resource's name
         """
         raise NotImplementedError("A implémenter dans les classes fille")
