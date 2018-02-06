@@ -1,0 +1,2 @@
+include README.rst LICENSE tox.ini requirements.txt
+recursive-include paclair_tests *.py
