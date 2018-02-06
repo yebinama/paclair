@@ -62,8 +62,10 @@ Config Option | Description |
 
 ## Running the tests
 
+Launch tox.
+
 ```
-nosetests -v paclair_tests/
+tox
 ```
 
 
