@@ -10,23 +10,23 @@ Features:
 - Simple to use.
 - Easy integration in a CI job thanks to a lightweight output mode.
 
-Getting Started
----------------
+Installation
+------------
 
 To install Paclair, simply use `pipenv <http://pipenv.org/>`_ (or pip, of course):
-
-
-Installation
-~~~~~~~~~~~~~
 
 .. code-block:: bash
 
     $ pipenv install paclair
     ✨🍰✨
 
+Voilà!
 
 Configuration
-~~~~~~~~~~~~~
+-------------
+
+Example
+~~~~~~~
 
 An example configuration file is available in the conf directory
 
@@ -52,6 +52,9 @@ We have various plugins to interact with different sources (ex: docker registry,
 because we use a custom variant of Clair which can analyse more than Docker images.
 
 If you want to use Paclair only to analyse docker images, don't bother with others plugins.
+
+Options
+~~~~~~~
 
 +-----------------------------------+-----------------------------------+
 | Config Option                     | Description                       |
