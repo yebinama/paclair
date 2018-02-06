@@ -13,21 +13,17 @@ Features:
 Getting Started
 ---------------
 
-Prerequisites
+To install Paclair, simply use `pipenv <http://pipenv.org/>`_ (or pip, of course):
+
+
+Installation
 ~~~~~~~~~~~~~
 
-All requirements are specified in requirements.txt
-
 .. code-block:: bash
 
-    pip install -r requirements.txt
+    $ pipenv install paclair
+    ✨🍰✨
 
-Installing
-~~~~~~~~~~
-
-.. code-block:: bash
-
-    python setup.py install
 
 Configuration
 ~~~~~~~~~~~~~
