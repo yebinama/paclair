@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .logged_object import LoggedObject
-from .exceptions import ClairConnectionError, ResourceNotFoundException
+from paclair.logged_object import LoggedObject
+from paclair.exceptions import ClairConnectionError, ResourceNotFoundException
 import requests
 
 

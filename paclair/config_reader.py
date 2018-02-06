@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .clair_requests import ClairRequests
-from .logged_object import LoggedObject
+from paclair.clair_requests import ClairRequests
+from paclair.logged_object import LoggedObject
 import importlib
 import yaml
 

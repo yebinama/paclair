@@ -70,7 +70,7 @@ nosetests -v paclair_tests/
 ## Usage
 
 ```
-python -m paclair.main --help
+paclair --help
 usage: main.py [-h] [--debug] [--syslog] [--conf CONF]
                plugin hosts [hosts ...] {push,analyse} ...
 
@@ -94,14 +94,14 @@ optional arguments:
 Push ubuntu image to Clair
 
 ```
-python -m paclair.main --conf conf/conf.yml Docker ubuntu push
+paclair --conf conf/conf.yml Docker ubuntu push
 Pushed ubuntu to Clair.
 ```
 
 Analyse ubuntu image
 
 ```
-python -m paclair.main --conf conf/conf.yml Docker ubuntu analyse --statistics
+paclair --conf conf/conf.yml Docker ubuntu analyse --statistics
 Medium: 3
 ```
 

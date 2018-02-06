@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
 
-from .exceptions import PluginNotFoundException
-from .logged_object import LoggedObject
-from .config_reader import ConfigReader
-from .exceptions import PaclairException
+from paclair.exceptions import PluginNotFoundException
+from paclair.logged_object import LoggedObject
+from paclair.config_reader import ConfigReader
+from paclair.exceptions import PaclairException
 import logging
 import logging.handlers
 import argparse
