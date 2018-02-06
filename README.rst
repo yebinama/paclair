@@ -95,14 +95,14 @@ Launch tox.
 
 .. code-block:: bash
 
-    tox
+    $ tox
 
 Usage
 -----
 
 .. code-block:: bash
 
-    paclair --help
+    $ paclair --help
     usage: main.py [-h] [--debug] [--syslog] [--conf CONF]
                    plugin hosts [hosts ...] {push,analyse} ...
 
@@ -126,14 +126,14 @@ Push ubuntu image to Clair
 
 .. code-block:: bash
 
-    paclair --conf conf/conf.yml Docker ubuntu push
+    $ paclair --conf conf/conf.yml Docker ubuntu push
     Pushed ubuntu to Clair.
 
 Analyse ubuntu image
 
 .. code-block:: bash
 
-    paclair --conf conf/conf.yml Docker ubuntu analyse --statistics
+    $ paclair --conf conf/conf.yml Docker ubuntu analyse --statistics
     Medium: 3
 
 You can have the full json if you don't specify --statistics
