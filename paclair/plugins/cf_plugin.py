@@ -24,7 +24,7 @@ class CfPlugin(AbstractPlugin):
 
     def push(self, name):
         rootfs_path = "{}/{}".format(self.base_url, name)
-        result = requests.head(rootfs_path, verify = self.verify)
+        result = requests.head(rootfs_path, verify=self.verify)
         if result.status_code != requests.codes.ok:
             raise ResourceNotFoundException("{} not found".format(name))
 
