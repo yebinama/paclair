@@ -8,7 +8,7 @@ with open('README.rst', 'r', 'utf-8') as f:
 
 setup(name="paclair",
       version="1.0.0",
-      description="Push and Ask Clair",
+      description="Push and Analyse with Clair",
       long_description=readme,
       author="Grégoire UNBEKANDT",
       url="https://github.com/yebinama/paclair",
