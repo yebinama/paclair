@@ -7,31 +7,30 @@ import yaml
 
 class ConfigReader(LoggedObject):
     """
-    Classe permettant de lire le fichier de conf
+    Read configuration file
     """
 
     def __init__(self, filename):
         """
-        Initialisation
+        Constructor
 
-        :param filename: nom du fichier de conf
+        :param filename: configuration filename
         """
         super(ConfigReader, self).__init__()
         self.filename = filename
 
     def read_section(self, section):
         """
-        Renvoie la configuration associée à la section
+        Read section's configuration
 
-        :param section: nom de la section
-        :returns dict:
+        :param section: section's name
         """
         with open(self.filename, 'r') as f:
-            # Chargement
+            # Load
             self.logger.debug("Lecture de la section %s du fichier %s" % (section, self.filename))
             conf = yaml.safe_load(f)
 
-            # Vérification de la structure
+            # Check structure
             if section not in conf:
                 self.logger.error("Pas de section %s dans le fichier de conf" % section)
                 return {}
@@ -39,9 +38,9 @@ class ConfigReader(LoggedObject):
 
     def read_plugins(self, plugin_section="Plugins"):
         """
-        Renvoie les plugins associés à la conf
+        Read plugins
 
-        :param plugin_section: nom de la section plugins
+        :param plugin_section: plugins' section's name
         """
         plugins = self.read_section(plugin_section)
         clair_conf = self.read_section("General")
@@ -63,14 +62,13 @@ class ConfigReader(LoggedObject):
     @staticmethod
     def _get_class(kls):
         """
-        Fonction permettant d'instancier une classe à partir d'une String
+        Instantiate a class from a String
 
-        :param kls: nom de la classe à importer
-        :return: la classe désirée
+        :param kls: class name
         """
         mod, _, cls = kls.rpartition('.')
 
-        # Import du module
+        # Import module
         mod = importlib.import_module(mod)
 
         return getattr(mod, cls)

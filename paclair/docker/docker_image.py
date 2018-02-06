@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Module docker_image
+Docker_image module
 """
 
 from paclair.logged_object import LoggedObject
@@ -9,17 +9,17 @@ from paclair.logged_object import LoggedObject
 
 class DockerImage(LoggedObject):
     """
-    Classe permettant d'exader aux donnees d'une image docker
+    A Docker Image
     """
 
     def __init__(self, name, registry, repository="", tag='latest'):
         """
-        Initialisation
+        Constructor
 
-        :param name: nom de l'imade docker (ex: ubuntu, centos, ...)
-        :param repository: nom du dépôt
-        :param tag: tag de l'image
-        :param registry: registry Docker associée
+        :param name: docker image's name (ex: ubuntu, centos, ...)
+        :param repository: repository's name
+        :param tag: image's tag
+        :param registry: Docker registry
         """
         super(DockerImage, self).__init__()
         self.name = name
@@ -33,7 +33,7 @@ class DockerImage(LoggedObject):
     @property
     def token(self):
         """
-        Token pour cette image
+        Token for this image
 
         :return:
         """
@@ -42,7 +42,7 @@ class DockerImage(LoggedObject):
     @property
     def manifest(self):
         """
-        Renvoie le manifest de l'image docker en format json
+        Get manifest
 
         :returns dict:
         """
@@ -50,7 +50,7 @@ class DockerImage(LoggedObject):
 
     def get_layers(self):
         """
-        Renvoie la liste des layers d'un docker dans l'ordre
+        Get ordered layers
 
         :returns list:
         """

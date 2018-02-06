@@ -7,7 +7,7 @@ import requests
 
 class ClairRequests(LoggedObject):
     """
-    Objet de connexion à Clair
+    Request Clair helper
     """
 
     _CLAIR_ANALYZE_URI = "/v1/layers/{}?features&vulnerabilities"
@@ -16,9 +16,9 @@ class ClairRequests(LoggedObject):
 
     def __init__(self, clair_url, verify=True):
         """
-        Constructeur
+        Constructor
 
-        :param clair_url: URL de l'api de Clair
+        :param clair_url: Clair api URL
         :param verify: request verify certificate
         """
         super().__init__()
@@ -27,12 +27,12 @@ class ClairRequests(LoggedObject):
 
     def _request(self, method, uri, **kwargs):
         """
-        Exécution du verbe http method sur l'uri uri de Clair
+        Execute http method on uri
 
-        :param method: verbe http
-        :param uri: uri à appeler
-        :param kwargs: paramètres supplémentaires
-        :return : la réponse du serveur
+        :param method: http verb
+        :param uri: uri to request
+        :param kwargs: other params
+        :return : server's response
         """
         url = self.url + uri
         self.logger.debug("Requesting {} on {}".format(method, url))
@@ -48,9 +48,9 @@ class ClairRequests(LoggedObject):
 
     def get_layer(self, name):
         """
-        Retourne l'analyse du layer name
+        Analyse a layer
 
-        :param name: nom du layer
+        :param name: layer's name
         :return: json
         """
         response = self._request('GET', self._CLAIR_ANALYZE_URI.format(name))
@@ -58,18 +58,18 @@ class ClairRequests(LoggedObject):
 
     def post_layer(self, data):
         """
-        POST sur l'api layer de Clair
+        POST layer to Clair
 
-        :param data: dictionnaire à envoyer à Clair en post sur la collection Layer
+        :param data: data to send to clair
         """
         self.logger.debug("Sending to Clair: {}".format(data))
         return self._request('POST', self._CLAIR_POST_URI, json=data)
 
     def delete_layer(self, name):
         """
-        Delete le layer name
+        Delete layer
 
-        :param name: nom du layer
+        :param name: layer's name
         """
         return self._request('DELETE', self._CLAIR_DELETE_URI.format(name))
 
@@ -78,11 +78,11 @@ class ClairRequests(LoggedObject):
         """
         Helper
 
-        :param name: nom de la ressource
-        :param path: path de la ressource
-        :param format: format Clair
-        :params kwargs: arguments supplémentaires
-        :return: json à envoyer à clair pour post
+        :param name: resource's name
+        :param path: resource path
+        :param format: Clair format
+        :params kwargs: additional params
+        :return: json to post to Clair
         """
         data = {"Layer": {"Name": name, "Path": path, "Format": clair_format}}
         data["Layer"].update(kwargs)
