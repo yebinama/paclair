@@ -4,11 +4,13 @@ import json
 from paclair.exceptions import PluginNotFoundException
 from paclair.logged_object import LoggedObject
 from paclair.config_reader import ConfigReader
-from paclair.exceptions import PaclairException
+from paclair.exceptions import PaclairException, ConfigurationError
+from yaml import YAMLError
 import logging
 import logging.handlers
 import argparse
 import os
+import sys
 
 DEFAULT_CONFIG_FILE = "/etc/paclair.conf"
 
@@ -25,7 +27,10 @@ class PaClair(LoggedObject):
         """
         super().__init__()
         self._config_reader = ConfigReader(config_file or DEFAULT_CONFIG_FILE)
-        self._plugins = self._config_reader.read_plugins('Plugins')
+        try:
+            self._plugins = self._config_reader.read_plugins('Plugins')
+        except YAMLError:
+            raise ConfigurationError("Incorrect configuration file")
 
     def analyse(self, plugin, name, delete=False):
         """
@@ -118,7 +123,12 @@ def main():
         logger.addHandler(logging.StreamHandler())
 
     # Run
-    paclair_object = PaClair(args.conf)
+    try:
+        paclair_object = PaClair(args.conf)
+    except (OSError, ConfigurationError) as error:
+        logger.error(error)
+        sys.exit(1)
+
     for host in args.hosts:
         try:
             if args.subparser_name == "push":
@@ -134,9 +144,11 @@ def main():
         except PluginNotFoundException as error:
             logger.error("Can't find plugin {} in configuration file.".format(args.plugin))
             logger.error(error)
+            sys.exit(2)
         except PaclairException as error:
             logger.error("Error treating {}".format(host))
             logger.error(error)
+            sys.exit(2)
 
 
 if __name__ == "__main__":

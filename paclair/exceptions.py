@@ -12,6 +12,13 @@ class PaclairException(Exception):
     pass
 
 
+class ConfigurationError(PaclairException):
+    """
+    Error reading configuration file
+    """
+    pass
+
+
 class ClairConnectionError(PaclairException):
     """
     Error reaching Clair

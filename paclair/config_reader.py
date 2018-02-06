@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from paclair.clair_requests import ClairRequests
 from paclair.logged_object import LoggedObject
+from paclair.exceptions import ConfigurationError
 import importlib
 import yaml
 
@@ -44,6 +45,8 @@ class ConfigReader(LoggedObject):
         """
         plugins = self.read_section(plugin_section)
         clair_conf = self.read_section("General")
+        if not clair_conf:
+            raise ConfigurationError("Can't read Clair's configuration") 
         clair = ClairRequests(**clair_conf)
         result = {}
 
