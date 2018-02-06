@@ -39,7 +39,7 @@ class DockerPlugin(AbstractPlugin):
         """
         matcher = self._pattern.match(name)
         if not matcher:
-            raise ResourceNotFoundException("Docker {} introuvable".format(name))
+            raise ResourceNotFoundException("Incorrect image name: {}".format(name))
 
         # Base docker image
         if matcher.group("domain") is None:

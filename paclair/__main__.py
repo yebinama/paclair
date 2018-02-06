@@ -44,12 +44,12 @@ class PaClair(LoggedObject):
         :raise ClairConnectionError: if an error occurs requesting Clair
         """
         if plugin not in self._plugins:
-            raise PluginNotFoundException("Plugin {} inconnu".format(plugin))
+            raise PluginNotFoundException("Plugin {} is unknown".format(plugin))
 
-        self.logger.debug("Analyse de  {}".format(name))
+        self.logger.debug("Analysing {}".format(name))
         result = self._plugins[plugin].analyse(name)
         if delete:
-            self.logger.debug("Suppression de  {}".format(name))
+            self.logger.debug("Deleting  {}".format(name))
             self._plugins[plugin].delete(name)
         return result
 
@@ -62,9 +62,9 @@ class PaClair(LoggedObject):
         :return:
         """
         if plugin not in self._plugins:
-            raise PluginNotFoundException("Plugin {} inconnu".format(plugin))
+            raise PluginNotFoundException("Plugin {} is unknown".format(plugin))
 
-        self.logger.debug("Push de {} avec le plugin {}".format(name, plugin))
+        self.logger.debug("Push {} with plugin {}".format(name, plugin))
         self._plugins[plugin].push(name)
 
     @staticmethod

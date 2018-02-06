@@ -50,4 +50,4 @@ class AbstractPlugin(LoggedObject):
 
         :param name: resource's name
         """
-        raise NotImplementedError("A implémenter dans les classes fille")
+        raise NotImplementedError("Implement in sub classes")
