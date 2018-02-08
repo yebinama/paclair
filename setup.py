@@ -1,12 +1,16 @@
 #-*- coding: UTF-8 -*-
 
 from setuptools import setup
+from codecs import open
+
+with open('README.rst', 'r', 'utf-8') as f:
+    readme = f.read()
 
 setup(name="paclair",
       version="1.0.0",
-      description="Push and Ask Clair",
-      author="Gregoire UNBEKANDT",
-      author_email="gregoire.unbekandt@gmail.com",
+      description="Push and Analyse containers with Clair",
+      long_description=readme,
+      author="Grégoire UNBEKANDT",
       url="https://github.com/yebinama/paclair",
       packages=["paclair", "paclair/plugins", "paclair/docker"],
       install_requires=[
