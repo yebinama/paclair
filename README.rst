@@ -1,7 +1,7 @@
 Paclair
 =======
 
-Paclair is a Python3 Cli tool to interact with Coreos's Clair (https://github.com/coreos/clair).
+Paclair is a Python3 Cli tool to interact with `Coreos's Clair <https://github.com/coreos/clair>`_
 
 Features:
 
