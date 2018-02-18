@@ -2,7 +2,7 @@ General:
   clair_url: 'https://localhost:6060'
 Plugins:
   Docker:
-    class: paclair.plugin.docker_plugin.DockerPlugin
+    class: paclair.plugins.docker_plugin.DockerPlugin
     registries:
       artifactory.registry.com:
         token_url: "https://artifactory.registry.com/api/docker/{image.repository}/v2/token?service=artifactory.registry.com"
