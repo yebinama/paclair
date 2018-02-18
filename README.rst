@@ -37,7 +37,7 @@ An example configuration file is available in the conf directory
       verify: "/etc/ssl/certs/my_custom_ca.crt"
     Plugins:
       Docker:
-        class: paclair.plugin.docker_plugin.DockerPlugin
+        class: paclair.plugins.docker_plugin.DockerPlugin
         registries:
           registry.gitlab.domain.com:
             auth:
