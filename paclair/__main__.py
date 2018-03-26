@@ -98,6 +98,7 @@ def main():
     # Subparsers
     subparsers = parser.add_subparsers(help="Command to launch", dest="subparser_name")
     subparsers.add_parser("push", help="Push images/hosts to Clair")
+    subparsers.add_parser("delete", help="Delete image from Clair")
     parser_analyse = subparsers.add_parser("analyse", help="Analyse images/hosts already pushed to Clair")
     parser_analyse.add_argument("--statistics", help="Only print statistics", action="store_true")
 
@@ -134,6 +135,9 @@ def main():
             if args.subparser_name == "push":
                 paclair_object.push(args.plugin, host)
                 logger.info("Pushed {} to Clair.".format(host))
+            elif args.subparser_name == "delete":
+                paclair_object.delete(args.plugin, host)
+                logger.info("{} was deleted from Clair.".format(host))
             else:
                 result = paclair_object.analyse(args.plugin, host)
                 if args.statistics:
