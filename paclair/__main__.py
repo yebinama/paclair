@@ -160,13 +160,15 @@ def main():
             elif args.subparser_name == "delete":
                 paclair_object.delete(args.plugin, host)
                 logger.info("{} was deleted from Clair.".format(host))
-            else:
+            elif args.subparser_name == "analyse":
                 result = paclair_object.analyse(args.plugin, host, args.delete)
                 if args.statistics:
                     result = paclair_object.statistics(result)
                     logger.info('\n'.join(("{}: {}".format(k, v) for k, v in result.items())))
                 else:
                     logger.info(json.dumps(result))
+            else:
+                parser.print_help()
         except PluginNotFoundException as error:
             logger.error("Can't find plugin {} in configuration file.".format(args.plugin))
             logger.error(error)
