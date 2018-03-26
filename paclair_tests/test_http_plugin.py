@@ -5,10 +5,10 @@ import requests_mock
 
 from paclair.clair_requests import ClairRequests
 from paclair.exceptions import ResourceNotFoundException
-from paclair.plugins.cf_plugin import CfPlugin
+from paclair.plugins.http_plugin import HttpPlugin
 
 
-class TestCfPlugin(unittest.TestCase):
+class TestHttpPlugin(unittest.TestCase):
     """
     Test de l'objet CfPlugin
     """
@@ -18,7 +18,7 @@ class TestCfPlugin(unittest.TestCase):
     clairURI = 'http://clair'
 
     def setUp(self):
-        self.cf = CfPlugin(ClairRequests(self.clairURI), self.artifacURI, self.artifacVERIFY)
+        self.cf = HttpPlugin(ClairRequests(self.clairURI), "cflinuxfs", self.artifacURI, self.artifacVERIFY)
 
 
     @requests_mock.mock()
