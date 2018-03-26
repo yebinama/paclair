@@ -32,6 +32,15 @@ class PaClair(LoggedObject):
         except YAMLError:
             raise ConfigurationError("Incorrect configuration file")
 
+    def _check_plugin(self, plugin):
+        """
+        Check if plugin is available
+        :param plugin: plugin to check
+        :raises PluginNotFoundException: if not found
+        """
+        if plugin not in self._plugins:
+            raise PluginNotFoundException("Plugin {} is unknown".format(plugin))
+
     def analyse(self, plugin, name, delete=False):
         """
         Analyse a layer
@@ -43,8 +52,7 @@ class PaClair(LoggedObject):
         :raises ResourceNotFoundException: if layer not found
         :raise ClairConnectionError: if an error occurs requesting Clair
         """
-        if plugin not in self._plugins:
-            raise PluginNotFoundException("Plugin {} is unknown".format(plugin))
+        self._check_plugin(plugin)
 
         self.logger.debug("Analysing {}".format(name))
         result = self._plugins[plugin].analyse(name)
@@ -61,11 +69,24 @@ class PaClair(LoggedObject):
         :param name: resource to push
         :return:
         """
-        if plugin not in self._plugins:
-            raise PluginNotFoundException("Plugin {} is unknown".format(plugin))
+        self._check_plugin(plugin)
 
         self.logger.debug("Push {} with plugin {}".format(name, plugin))
         self._plugins[plugin].push(name)
+
+    def delete(self, plugin, name):
+        """
+        Delete image from Clair
+
+        :param plugin: plugin's name
+        :param name: resource to delete
+        :raises ResourceNotFoundException: if layer not found
+        :raise ClairConnectionError: if an error occurs requesting Clair
+        """
+        self._check_plugin(plugin)
+
+        self.logger.debug("Delete {} with plugin {}".format(name, plugin))
+        self._plugins[plugin].delete(name)
 
     @staticmethod
     def statistics(clair_json):
@@ -101,6 +122,7 @@ def main():
     subparsers.add_parser("delete", help="Delete images/hosts from Clair")
     parser_analyse = subparsers.add_parser("analyse", help="Analyse images/hosts already pushed to Clair")
     parser_analyse.add_argument("--statistics", help="Only print statistics", action="store_true")
+    parser_analyse.add_argument("--delete", help="Delete after analyse", action="store_true")
 
     # Parse args
     args = parser.parse_args()
@@ -139,7 +161,7 @@ def main():
                 paclair_object.delete(args.plugin, host)
                 logger.info("{} was deleted from Clair.".format(host))
             else:
-                result = paclair_object.analyse(args.plugin, host)
+                result = paclair_object.analyse(args.plugin, host, args.delete)
                 if args.statistics:
                     result = paclair_object.statistics(result)
                     logger.info('\n'.join(("{}: {}".format(k, v) for k, v in result.items())))
