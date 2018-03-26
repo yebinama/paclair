@@ -56,7 +56,20 @@ class TestDockerImage(unittest.TestCase):
               headers={'Authorization': 'Bearer {token}'.format(token=self.token)})
 
         layers = image.get_layers()
-        self.assertEquals(layers, self.EXPECTED_LAYERS)
+        self.assertEqual(layers, self.EXPECTED_LAYERS)
+
+    @requests_mock.mock()
+    def test_sha(self, m):
+        """
+        Test sha method
+        """
+        registry = DockerRegistry(DOCKER_HUB_DOMAIN, token_url=DOCKER_HUB_TOKEN_REQUEST)
+        image = DockerImage('library/monimage', registry, tag='tag')
+        m.get(DOCKER_HUB_TOKEN_REQUEST.format(image=image), json=self.token_json)
+        m.get(registry.get_manifest_url(image), json=self.manifest_json,
+              headers={'Authorization': 'Bearer {token}'.format(token=self.token)})
+        self.assertEqual("58c0a48e3b6a2c9f3b1d8166e096789f20b769f538f4aecaa73d5eae15672b2b", image.sha)
+        self.assertEqual("58c0a48e3b6a", image.short_sha)
 
     @requests_mock.mock()
     def test_get_layers_docker_hub_v2(self, m):
@@ -70,7 +83,7 @@ class TestDockerImage(unittest.TestCase):
               headers={'Authorization': 'Bearer {token}'.format(token=self.token)})
 
         layers = image.get_layers()
-        self.assertEquals(layers, self.EXPECTED_LAYERS_V2)
+        self.assertEqual(layers, self.EXPECTED_LAYERS_V2)
 
     @requests_mock.mock()
     def test_get_layers_artifactory(self, m):
@@ -86,7 +99,7 @@ class TestDockerImage(unittest.TestCase):
               headers={'Authorization': 'Bearer {token}'.format(token=self.token)})
 
         layers = image.get_layers()
-        self.assertEquals(layers, self.EXPECTED_LAYERS)
+        self.assertEqual(layers, self.EXPECTED_LAYERS)
 
     @requests_mock.mock()
     def test_get_layers_artifactory_v2(self, m):
@@ -102,7 +115,7 @@ class TestDockerImage(unittest.TestCase):
               headers={'Authorization': 'Bearer {token}'.format(token=self.token)})
 
         layers = image.get_layers()
-        self.assertEquals(layers, self.EXPECTED_LAYERS_V2)
+        self.assertEqual(layers, self.EXPECTED_LAYERS_V2)
 
     @requests_mock.mock()
     def test_get_layers_other_registery(self, m):
@@ -119,7 +132,7 @@ class TestDockerImage(unittest.TestCase):
               headers={'Authorization': 'Bearer {token}'.format(token=self.token)})
 
         layers = image.get_layers()
-        self.assertEquals(layers, self.EXPECTED_LAYERS)
+        self.assertEqual(layers, self.EXPECTED_LAYERS)
 
     @requests_mock.mock()
     def test_get_layers_other_registery_v2(self, m):
@@ -136,7 +149,7 @@ class TestDockerImage(unittest.TestCase):
               headers={'Authorization': 'Bearer {token}'.format(token=self.token)})
 
         layers = image.get_layers()
-        self.assertEquals(layers, self.EXPECTED_LAYERS_V2)
+        self.assertEqual(layers, self.EXPECTED_LAYERS_V2)
 
     @requests_mock.mock()
     def test_manifest_http_error(self, m):
@@ -165,7 +178,7 @@ class TestDockerImage(unittest.TestCase):
                        headers={'Www-Authenticate':
                                     'Bearer realm="https://auth.docker.io/token",service="registry.docker.io"'})
         registry = DockerRegistry(DOCKER_HUB_DOMAIN)
-        self.assertEquals(registry.token_url, DOCKER_HUB_TOKEN_REQUEST)
+        self.assertEqual(registry.token_url, DOCKER_HUB_TOKEN_REQUEST)
 
         m.register_uri('GET', "https://{}/v2/".format(DOCKER_HUB_DOMAIN), headers={})
         with self.assertRaises(RegistryAccessError):
