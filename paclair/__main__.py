@@ -98,7 +98,7 @@ def main():
     # Subparsers
     subparsers = parser.add_subparsers(help="Command to launch", dest="subparser_name")
     subparsers.add_parser("push", help="Push images/hosts to Clair")
-    subparsers.add_parser("delete", help="Delete image from Clair")
+    subparsers.add_parser("delete", help="Delete images/hosts from Clair")
     parser_analyse = subparsers.add_parser("analyse", help="Analyse images/hosts already pushed to Clair")
     parser_analyse.add_argument("--statistics", help="Only print statistics", action="store_true")
 
