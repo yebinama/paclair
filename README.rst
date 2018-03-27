@@ -105,22 +105,24 @@ Usage
 
 .. code-block:: bash
 
-    $ paclair --help
-    usage: main.py [-h] [--debug] [--syslog] [--conf CONF]
-                   plugin hosts [hosts ...] {push,analyse} ...
+    usage: paclair [-h] [--debug] [--syslog] [--conf CONF]
+                   plugin hosts [hosts ...] {push,delete,analyse} ...
 
     positional arguments:
-      plugin          Plugin to launch
-      hosts           Image/hostname to analyse
-      {push,analyse}  Command to launch
-        push          Push images/hosts to Clair
-        analyse       Analyse images/hosts already pushed to Clair
+      plugin                Plugin to launch
+      hosts                 Image/hostname to analyse
+      {push,delete,analyse}
+                            Command to launch
+        push                Push images/hosts to Clair
+        delete              Delete images/hosts from Clair
+        analyse             Analyse images/hosts already pushed to Clair
 
     optional arguments:
-      -h, --help      show this help message and exit
-      --debug         Debug mode
-      --syslog        Log to syslog
-      --conf CONF     Conf file
+      -h, --help            show this help message and exit
+      --debug               Debug mode
+      --syslog              Log to syslog
+      --conf CONF           Conf file
+
 
 Example
 ~~~~~~~
@@ -140,6 +142,13 @@ Analyse ubuntu image
     Medium: 3
 
 You can have the full json if you don't specify --statistics
+
+Delete ubuntu image
+
+.. code-block:: bash
+
+    $ paclair --conf conf/conf.yml Docker ubuntu delete
+    ubuntu was deleted from Clair.
 
 Contributing
 ------------
