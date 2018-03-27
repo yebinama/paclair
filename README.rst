@@ -124,8 +124,8 @@ Usage
       --conf CONF           Conf file
 
 
-Example
-~~~~~~~
+Examples
+~~~~~~~~
 
 Push ubuntu image to Clair
 
