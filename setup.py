@@ -7,7 +7,7 @@ with open('README.rst', 'r', 'utf-8') as f:
     readme = f.read()
 
 setup(name="paclair",
-      version="1.0.1",
+      version="2.0.0",
       description="Push and Analyse containers with Clair",
       long_description=readme,
       author="Grégoire UNBEKANDT",
@@ -21,8 +21,8 @@ setup(name="paclair",
       command_options={
                'build_sphinx': {
                    'project': ('setup.py', "paclair"),
-                   'version': ('setup.py', "1.0.1"),
-                   'release': ('setup.py', "1.0.1"),
+                   'version': ('setup.py', "2.0.0"),
+                   'release': ('setup.py', "2.0.0"),
                    'build_dir': ('setup.py', 'doc/sphinx/_build/')}},
      entry_points={
          'console_scripts': [
