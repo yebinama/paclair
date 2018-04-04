@@ -15,7 +15,7 @@ setup(name="paclair",
       packages=["paclair", "paclair/plugins", "paclair/docker"],
       install_requires=[
           'elasticsearch',
-          'requests',
+          'requests>=2.4.2',
           'pyyaml'
       ],
       command_options={
