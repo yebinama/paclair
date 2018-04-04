@@ -4,6 +4,7 @@
 Docker_image module
 """
 
+import hashlib
 from paclair.logged_object import LoggedObject
 
 
@@ -28,6 +29,8 @@ class DockerImage(LoggedObject):
         self.logger.debug("INITCLASS:TAG:{tag}".format(tag=self.tag))
         self.registry = registry
         self.repository = repository
+        self._manifest = None
+        self._sha = None
         self.logger.debug("INITCLASS:REPOSITORY:{repository}".format(repository=self.repository))
 
     @property
@@ -40,13 +43,34 @@ class DockerImage(LoggedObject):
         return self.registry.get_token(self)
 
     @property
+    def sha(self):
+        """
+        Sha256 of the layers list (used for clair layer_name)
+
+        :return: sha256
+        """
+        if self._sha is None:
+            m = hashlib.sha256(''.join(self.get_layers()).encode('utf-8'))
+            self._sha = m.hexdigest()
+        return self._sha
+
+    @property
+    def short_sha(self):
+        """
+        Sha short version (12 characters)
+        """
+        return self.sha[:12]
+
+    @property
     def manifest(self):
         """
         Get manifest
 
         :returns dict:
         """
-        return self.registry.get_manifest(self)
+        if self._manifest is None:
+            self._manifest = self.registry.get_manifest(self)
+        return self._manifest
 
     def get_layers(self):
         """

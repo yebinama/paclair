@@ -74,17 +74,18 @@ class DockerPlugin(AbstractPlugin):
 
         # Push layers to Clair
         for layer in layers:
-            data = self.clair.to_clair_post_data(layer, partial_path.format(digest=layer), self.clair_format,
+            layer_name = "{}_{}".format(layer, docker_image.short_sha)
+            data = self.clair.to_clair_post_data(layer_name, partial_path.format(digest=layer), self.clair_format,
                                                  **additional_data)
             self.clair.post_layer(data)
-            additional_data['ParentName'] = layer
+            additional_data['ParentName'] = layer_name
 
     def analyse(self, name):
         docker_image = self.create_docker_image(name)
-        layer_name = docker_image.get_layers()[-1]
+        layer_name = "{}_{}".format(docker_image.get_layers()[-1], docker_image.short_sha)
         return super().analyse(layer_name)
 
     def delete(self, name):
         docker_image = self.create_docker_image(name)
         for layer in docker_image.get_layers()[::-1]:
-            super().delete(layer)
+            super().delete("{}_{}".format(layer, docker_image.short_sha))
