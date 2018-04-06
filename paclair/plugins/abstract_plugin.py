@@ -33,7 +33,7 @@ class AbstractPlugin(LoggedObject):
         :param name: resource to analyse
         :return: json from clair
         """
-        return self.clair.get_ancestry(self.create_ancestry(name))
+        return self.clair.get_ancestry(name)
 
     def delete(self, name):
         """

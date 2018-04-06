@@ -50,10 +50,10 @@ class ClairRequests(LoggedObject):
         """
         Analyse an ancestry
 
-        :param ancestry: ancestry to analyse
+        :param ancestry: ancestry (name) to analyse
         :return: json
         """
-        return self.get_layer(ancestry.layers[-1].name)
+        return self.get_layer(ancestry)
 
     def post_ancestry(self, ancestry):
         """

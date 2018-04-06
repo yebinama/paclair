@@ -7,14 +7,13 @@ class DockerAncestry(GenericAncestry):
     Construct an ancestry from a docker image
     """
 
-    def __init__(self, name, docker_image):
+    def __init__(self, docker_image):
         """
         Constructor
 
-        :param name: image name
         :param docker_image:  docker image
         """
-        super().__init__(name, "Docker")
+        super().__init__("Docker")
 
         # headers
         headers ={'Authorization': "Bearer {}".format(docker_image.token)}
@@ -26,3 +25,4 @@ class DockerAncestry(GenericAncestry):
             self.layers.append(Layer("{}_{}".format(layer, docker_image.short_sha), layer,
                                      partial_path.format(digest=layer), headers, parent))
             parent = layer
+        self.name = self.layers[-1].name

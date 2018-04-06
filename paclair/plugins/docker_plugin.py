@@ -65,4 +65,8 @@ class DockerPlugin(AbstractPlugin):
         return DockerImage(matcher.group("name"), registry, repo, tag=matcher.group("tag") or 'latest')
 
     def create_ancestry(self, name):
-        return DockerAncestry(name, self.create_docker_image(name))
+        return DockerAncestry(self.create_docker_image(name))
+
+    def analyse(self, name):
+        ancestry = self.create_ancestry(name)
+        return self.clair.get_ancestry(ancestry.name)
