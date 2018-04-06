@@ -33,7 +33,7 @@ class AbstractPlugin(LoggedObject):
         :param name: resource to analyse
         :return: json from clair
         """
-        return self.clair.get_layer(name)
+        return self.clair.get_ancestry(self.create_ancestry(name))
 
     def delete(self, name):
         """
@@ -41,13 +41,22 @@ class AbstractPlugin(LoggedObject):
 
         :param name: resource's name
         """
-        self.clair.delete_layer(name)
+        return self.clair.delete_ancestry(self.create_ancestry(name))
 
-    @abstractmethod
     def push(self, name):
         """
         Push to Clair
 
         :param name: resource's name
+        """
+        return self.clair.post_ancestry(self.create_ancestry(name))
+
+    @abstractmethod
+    def create_ancestry(self, name):
+        """
+        Create ancestry associated with this plugin
+
+        :param name: name
+        :return: Ancestry object
         """
         raise NotImplementedError("Implement in sub classes")

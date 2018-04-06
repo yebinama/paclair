@@ -64,14 +64,5 @@ class DockerPlugin(AbstractPlugin):
             registry = DockerRegistry(matcher.group("domain"))
         return DockerImage(matcher.group("name"), registry, repo, tag=matcher.group("tag") or 'latest')
 
-    def push(self, name):
-        ancestry = DockerAncestry(name, self.create_docker_image(name))
-        self.clair.post_ancestry(ancestry)
-
-    def analyse(self, name):
-        ancestry = DockerAncestry(name, self.create_docker_image(name))
-        return self.clair.get_ancestry(ancestry)
-
-    def delete(self, name):
-        ancestry = DockerAncestry(name, self.create_docker_image(name))
-        return self.clair.delete_ancestry(ancestry)
+    def create_ancestry(self, name):
+        return DockerAncestry(name, self.create_docker_image(name))

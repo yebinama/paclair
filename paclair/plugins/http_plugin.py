@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 
+from paclair.ancestries.generic import GenericAncestry, Layer
 from paclair.plugins.abstract_plugin import AbstractPlugin
 from paclair.exceptions import ResourceNotFoundException
 
@@ -41,14 +42,11 @@ class HttpPlugin(AbstractPlugin):
         _, _, name = name.rpartition('/')
         return name
 
-    def push(self, name):
+    def create_ancestry(self, name):
         path = "{}/{}".format(self.base_url, name)
         result = requests.head(path, verify=self.verify)
         if result.status_code != requests.codes.ok:
             raise ResourceNotFoundException("{} not found".format(name))
 
-        data = self.clair.to_clair_post_data(self._clean_name(name), path, self.clair_format)
-        self.clair.post_layer(data)
-
-    def analyse(self, name):
-        return super().analyse(self._clean_name(name))
+        name = self._clean_name(name)
+        return GenericAncestry(self._clean_name(name), self.clair_format, [Layer(name, name, path)])
