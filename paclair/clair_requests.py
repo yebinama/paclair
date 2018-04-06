@@ -46,6 +46,29 @@ class ClairRequests(LoggedObject):
             raise ClairConnectionError(response)
         return response
 
+    def get_ancestry(self, ancestry):
+        """
+        Analyse an ancestry
+
+        :param ancestry: ancestry to analyse
+        :return: json
+        """
+        return self.get_layer(ancestry.layers[-1].name)
+
+    def post_ancestry(self, ancestry):
+        """
+        Post ancestry to Clair
+
+        :param ancestry: ancestry to push
+        """
+
+        for layer in ancestry.layers:
+            additional_data = {'ParentName': layer.name}
+            if layer.headers is not None:
+                additional_data['Headers'] = layer.headers
+            data = self.to_clair_post_data(layer.name, layer.path, ancestry.clair_format, **additional_data)
+            self.post_layer(data)
+
     def get_layer(self, name):
         """
         Analyse a layer
