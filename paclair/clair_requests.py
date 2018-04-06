@@ -69,6 +69,15 @@ class ClairRequests(LoggedObject):
             data = self.to_clair_post_data(layer.name, layer.path, ancestry.clair_format, **additional_data)
             self.post_layer(data)
 
+    def delete_ancestry(self, ancestry):
+        """
+        Delete ancestry from Clair
+
+        :param ancestry: ancestry to delete
+        """
+        for layer in ancestry.layers[::-1]:
+            self.delete(layer.name)
+
     def get_layer(self, name):
         """
         Analyse a layer

@@ -73,6 +73,5 @@ class DockerPlugin(AbstractPlugin):
         return self.clair.get_ancestry(ancestry)
 
     def delete(self, name):
-        docker_image = self.create_docker_image(name)
-        for layer in docker_image.get_layers()[::-1]:
-            super().delete("{}_{}".format(layer, docker_image.short_sha))
+        ancestry = DockerAncestry(name, self.create_docker_image(name))
+        return self.clair.delete_ancestry(ancestry)
