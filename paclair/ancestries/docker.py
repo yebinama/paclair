@@ -13,7 +13,7 @@ class DockerAncestry(GenericAncestry):
 
         :param docker_image:  docker image
         """
-        super().__init__("Docker")
+        super().__init__("", "Docker")
 
         # headers
         headers ={'Authorization': "Bearer {}".format(docker_image.token)}
