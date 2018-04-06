@@ -12,7 +12,7 @@ setup(name="paclair",
       long_description=readme,
       author="Grégoire UNBEKANDT",
       url="https://github.com/yebinama/paclair",
-      packages=["paclair", "paclair/plugins", "paclair/docker"],
+      packages=["paclair", "paclair/plugins", "paclair/docker", "paclair/ancestries"],
       install_requires=[
           'elasticsearch',
           'requests>=2.4.2',
