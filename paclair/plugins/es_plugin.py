@@ -4,6 +4,7 @@ import datetime
 
 from elasticsearch import Elasticsearch, RequestsHttpConnection
 
+from paclair.ancestries.generic import GenericAncestry, Layer
 from paclair.plugins.abstract_plugin import AbstractPlugin
 from paclair.exceptions import ResourceNotFoundException
 
@@ -35,6 +36,15 @@ class EsPlugin(AbstractPlugin):
             self.index += (datetime.datetime.today() + datetime.timedelta(**timedelta)).strftime(suffix)
 
     def push(self, name):
+        self.logger.debug("Remove layer {} from Clair's Database.".format(name))
+        try:
+            self.delete(name)
+        except ResourceNotFoundException:
+            self.logger.debug("Layer {} not yet in Clair's Database.".format(name))
+
+        return super().push(name)
+
+    def create_ancestry(self, name):
         # get ID
         search = {"size": 1, "sort": {'@timestamp': "desc"}, "_source": False,
                   "query": {'match_phrase': {'hostname': name}}}
@@ -43,22 +53,14 @@ class EsPlugin(AbstractPlugin):
         if result['total'] == 0:
             raise ResourceNotFoundException("{} not found".format(name))
 
-        self.logger.debug("Remove layer {} from Clair's Database.".format(name))
-        try:
-            self.delete(name)
-        except ResourceNotFoundException:
-            self.logger.debug("Layer {} not yet in Clair's Database.".format(name))
-
         id_name = result['hits'][0]['_id']
         path = self.__SOURCE_URL.format(self._es.transport.get_connection().host, self.index, self.doc_type, id_name)
 
         # Authentication
         auth = self._es.transport.get_connection().session.auth
+        headers = None
         if auth is not None:
             digest = "{}:{}".format(*auth)
             digest = base64.b64encode(digest.encode("utf-8"))
-            headers = {'Headers': {'Authorization': 'Basic {}'.format(digest.decode('utf-8'))}}
-            data = self.clair.to_clair_post_data(name, path, self.clair_format, **headers)
-        else:
-            data = self.clair.to_clair_post_data(name, path, self.clair_format)
-        self.clair.post_layer(data)
+            headers ={'Authorization': 'Basic {}'.format(digest.decode('utf-8'))}
+        return GenericAncestry(name, self.clair_format, [Layer(name, name, path, headers)])
