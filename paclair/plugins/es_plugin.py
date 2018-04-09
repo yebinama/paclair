@@ -43,7 +43,7 @@ class EsPlugin(AbstractPlugin):
         except ResourceNotFoundException:
             self.logger.debug("Ancestry {} not yet in Clair's Database.".format(name))
 
-        return self.clair.post_ancestry(self.create_ancestry(ancestry))
+        return self.clair.post_ancestry(ancestry)
 
     def create_ancestry(self, name):
         # get ID
