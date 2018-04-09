@@ -76,7 +76,7 @@ class ClairRequests(LoggedObject):
         :param ancestry: ancestry to delete
         """
         for layer in ancestry.layers[::-1]:
-            self.delete(layer.name)
+            self.delete_layer(layer.name)
 
     def get_layer(self, name):
         """
