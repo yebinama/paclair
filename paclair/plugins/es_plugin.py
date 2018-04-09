@@ -36,13 +36,14 @@ class EsPlugin(AbstractPlugin):
             self.index += (datetime.datetime.today() + datetime.timedelta(**timedelta)).strftime(suffix)
 
     def push(self, name):
-        self.logger.debug("Remove layer {} from Clair's Database.".format(name))
+        ancestry = self.create_ancestry(name)
+        self.logger.debug("Remove ancestry {} from Clair's Database.".format(name))
         try:
-            self.delete(name)
+            self.clair.delete_ancestry(ancestry)
         except ResourceNotFoundException:
-            self.logger.debug("Layer {} not yet in Clair's Database.".format(name))
+            self.logger.debug("Ancestry {} not yet in Clair's Database.".format(name))
 
-        return super().push(name)
+        return self.clair.post_ancestry(self.create_ancestry(ancestry))
 
     def create_ancestry(self, name):
         # get ID

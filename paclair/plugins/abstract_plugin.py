@@ -41,7 +41,7 @@ class AbstractPlugin(LoggedObject):
 
         :param name: resource's name
         """
-        return self.clair.delete_ancestry(name)
+        return self.clair.delete_ancestry(self.create_ancestry(name))
 
     def push(self, name):
         """
