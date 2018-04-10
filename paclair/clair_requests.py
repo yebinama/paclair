@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import requests
 from paclair.logged_object import LoggedObject
 from paclair.exceptions import ClairConnectionError, ResourceNotFoundException
-import requests
 
 
 class ClairRequests(LoggedObject):

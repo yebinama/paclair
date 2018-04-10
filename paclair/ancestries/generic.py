@@ -35,18 +35,19 @@ class Layer(LoggedObject):
     Layer object
     """
 
-    def __init__(self, name, hash, path, headers=None, parent=""):
+    def __init__(self, name, lhash, path, headers=None, parent=""):
         """
         Constructor
 
         :param name: layer name
-        :param hash: hash
+        :param lhash: hash
         :param path: path
         :param headers: headers
         :param parent: parent name
         """
+        super().__init__()
         self.name = name
-        self.hash = hash
+        self.lhash = lhash
         self.path = path
         self.headers = headers
         self.parent = parent

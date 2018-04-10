@@ -28,12 +28,12 @@ class ConfigReader(LoggedObject):
         """
         with open(self.filename, 'r') as f:
             # Load
-            self.logger.debug("Reading section %s in file %s" % (section, self.filename))
+            self.logger.debug("Reading section %s in file %s", section, self.filename)
             conf = yaml.safe_load(f)
 
             # Check structure
             if section not in conf:
-                self.logger.error("No section %s in configuration file" % section)
+                self.logger.error("No section %s in configuration file", section)
                 return {}
             return conf[section]
 
@@ -52,13 +52,13 @@ class ConfigReader(LoggedObject):
 
         for plugin, conf in plugins.items():
             try:
-                self.logger.debug('Reading plugin %s' % plugin)
-                self.logger.debug('Configuration %s' % conf)
+                self.logger.debug('Reading plugin %s', plugin)
+                self.logger.debug('Configuration %s', conf)
 
                 plugin_class = self._get_class(conf.pop('class'))
                 result[plugin] = plugin_class(clair, **conf)
             except (ValueError, KeyError):
-                self.logger.error("Can't read plugin %s" % plugin)
+                self.logger.error("Can't read plugin %s", plugin)
 
         return result
 

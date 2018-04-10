@@ -63,5 +63,5 @@ class EsPlugin(AbstractPlugin):
         if auth is not None:
             digest = "{}:{}".format(*auth)
             digest = base64.b64encode(digest.encode("utf-8"))
-            headers ={'Authorization': 'Basic {}'.format(digest.decode('utf-8'))}
+            headers = {'Authorization': 'Basic {}'.format(digest.decode('utf-8'))}
         return GenericAncestry(name, self.clair_format, [Layer(name, name, path, headers)])
