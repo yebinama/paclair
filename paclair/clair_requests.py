@@ -61,13 +61,13 @@ class ClairRequests(LoggedObject):
 
         :param ancestry: ancestry to push
         """
-
+        additional_data = {}
         for layer in ancestry.layers:
-            additional_data = {'ParentName': layer.name}
             if layer.headers is not None:
                 additional_data['Headers'] = layer.headers
             data = self.to_clair_post_data(layer.name, layer.path, ancestry.clair_format, **additional_data)
             self.post_layer(data)
+            additional_data = {'ParentName': layer.name}
 
     def delete_ancestry(self, ancestry):
         """
