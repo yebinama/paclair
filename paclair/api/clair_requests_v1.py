@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import requests
-from paclair.logged_object import LoggedObject
-from paclair.exceptions import ClairConnectionError, ResourceNotFoundException
+
+from paclair.api.abstract_clair_requests import AbstractClairRequests
 
 
-class ClairRequests(LoggedObject):
+class ClairRequestsV1(AbstractClairRequests):
     """
     Request Clair helper
     """
@@ -13,38 +13,6 @@ class ClairRequests(LoggedObject):
     _CLAIR_ANALYZE_URI = "/v1/layers/{}?features&vulnerabilities"
     _CLAIR_POST_URI = "/v1/layers"
     _CLAIR_DELETE_URI = "/v1/layers/{}"
-
-    def __init__(self, clair_url, verify=True):
-        """
-        Constructor
-
-        :param clair_url: Clair api URL
-        :param verify: request verify certificate
-        """
-        super().__init__()
-        self.url = clair_url
-        self.verify = verify
-
-    def _request(self, method, uri, **kwargs):
-        """
-        Execute http method on uri
-
-        :param method: http verb
-        :param uri: uri to request
-        :param kwargs: other params
-        :return : server's response
-        """
-        url = self.url + uri
-        self.logger.debug("Requesting {} on {}".format(method, url))
-        response = requests.request(method, url, verify=self.verify, **kwargs)
-        try:
-            response.raise_for_status()
-        except requests.exceptions.HTTPError:
-            self.logger.error("Bad http code {} requesting Clair".format(response.status_code))
-            if response.reason == "Not Found":
-                raise ResourceNotFoundException("Resource not found")
-            raise ClairConnectionError(response)
-        return response
 
     def get_ancestry(self, ancestry):
         """
@@ -112,7 +80,7 @@ class ClairRequests(LoggedObject):
 
         :param name: resource's name
         :param path: resource path
-        :param format: Clair format
+        :param clair_format: Clair format
         :params kwargs: additional params
         :return: json to post to Clair
         """

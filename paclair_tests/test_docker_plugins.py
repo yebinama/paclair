@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import requests_mock
 
-from paclair.clair_requests import ClairRequests
+from paclair.api.clair_requests_v1 import ClairRequestsV1
 from paclair.docker.docker_image import DockerImage
 from paclair.exceptions import ResourceNotFoundException
 from paclair.plugins.docker_plugin import DockerPlugin
@@ -13,7 +13,7 @@ class TestDockerPlugin(unittest.TestCase):
     """docstring for TestDockerPlugin"""
 
     def setUp(self):
-        self.docker = DockerPlugin(ClairRequests('http://localhost:6060'))
+        self.docker = DockerPlugin(ClairRequestsV1('http://localhost:6060'))
 
     @requests_mock.mock()
     def test_push(self, m):

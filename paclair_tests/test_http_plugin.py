@@ -3,7 +3,7 @@ import unittest
 
 import requests_mock
 
-from paclair.clair_requests import ClairRequests
+from paclair.api.clair_requests_v1 import ClairRequestsV1
 from paclair.exceptions import ResourceNotFoundException
 from paclair.plugins.http_plugin import HttpPlugin
 
@@ -18,7 +18,7 @@ class TestHttpPlugin(unittest.TestCase):
     clairURI = 'http://clair'
 
     def setUp(self):
-        self.cf = HttpPlugin(ClairRequests(self.clairURI), "cflinuxfs", self.artifacURI, self.artifacVERIFY)
+        self.cf = HttpPlugin(ClairRequestsV1(self.clairURI), "cflinuxfs", self.artifacURI, self.artifacVERIFY)
 
 
     @requests_mock.mock()
