@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from paclair.api.clair_requests_v1 import ClairRequestsV1
 from paclair.logged_object import LoggedObject
 from paclair.exceptions import ConfigurationError
 import importlib
@@ -48,11 +49,13 @@ class ConfigReader(LoggedObject):
             raise ConfigurationError("Can't read Clair's configuration")
 
         # Read clair class
-        clair_class = self._get_class(clair_conf.pop("clair_class", "paclair.api.clair_requests_v1.ClairRequestsV1"))
-        clair = clair_class(**clair_conf)
+        clair_api_version = clair_conf.pop("clair_version", 1)
+        if clair_api_version == 3:
+            clair = ClairRequestsV1(**clair_conf)
+        else:
+            clair = ClairRequestsV1(**clair_conf)
 
         result = {}
-
         for plugin, conf in plugins.items():
             try:
                 self.logger.debug('Reading plugin %s', plugin)
