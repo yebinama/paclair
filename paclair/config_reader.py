@@ -48,7 +48,7 @@ class ConfigReader(LoggedObject):
         if not clair_conf:
             raise ConfigurationError("Can't read Clair's configuration")
 
-        # Read clair class
+        # Read clair api class
         clair_api_version = clair_conf.pop("clair_version", 1)
         if clair_api_version == 3:
             clair = ClairRequestsV1(**clair_conf)

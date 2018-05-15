@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import requests
-
 from paclair.api.abstract_clair_requests import AbstractClairRequests
 
 
