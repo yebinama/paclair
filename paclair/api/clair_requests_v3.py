@@ -8,7 +8,7 @@ class ClairRequestsV3(AbstractClairRequests):
     Request Clair helper
     """
 
-    _CLAIR_ANALYZE_URI = "/ancestry/{}?with_vulnerabilities&with_features"
+    _CLAIR_ANALYZE_URI = "/ancestry/{}?with_vulnerabilities=1&with_features=1"
     _CLAIR_POST_URI = "/ancestry"
     #_CLAIR_DELETE_URI = "/v1/ancestry/{}"
 
@@ -18,7 +18,9 @@ class ClairRequestsV3(AbstractClairRequests):
 
         :param ancestry: ancestry to push
         """
-        return self._request('POST', self._CLAIR_POST_URI, json=ancestry.to_json())
+        json = ancestry.to_json()
+        json['ancestry_name'] = ancestry.name.replace(':', '_')
+        return self._request('POST', self._CLAIR_POST_URI, json=json)
 
     def get_ancestry(self, ancestry):
         """
@@ -27,5 +29,5 @@ class ClairRequestsV3(AbstractClairRequests):
         :param ancestry: ancestry (name) to analyse
         :return: json
         """
-        response = self._request('GET', self._CLAIR_ANALYZE_URI.format(ancestry))
+        response = self._request('GET', self._CLAIR_ANALYZE_URI.format(ancestry.replace(':', '_')))
         return response.json()

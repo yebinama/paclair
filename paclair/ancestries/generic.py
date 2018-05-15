@@ -26,8 +26,8 @@ class GenericAncestry(LoggedObject):
 
         :return: dict
         """
-        return {"ancestry_name": self.name, format: self.clair_format,
-                "layers": [{'hash': l.hash, 'path': l.path, 'headers': l.headers}for l in self.layers]}
+        return {"ancestry_name": self.name, "format": self.clair_format,
+                "layers": [{'hash': l.lhash, 'path': l.path, 'headers': l.headers}for l in self.layers]}
 
 
 class Layer(LoggedObject):
