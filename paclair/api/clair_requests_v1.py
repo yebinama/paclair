@@ -44,14 +44,17 @@ class ClairRequestsV1(AbstractClairRequests):
         for layer in ancestry.layers[::-1]:
             self.delete_layer(layer.name)
 
-    def get_layer(self, name):
+    def get_layer(self, name, statistics=False):
         """
         Analyse a layer
 
         :param name: layer's name
+        :param statistics: only return statistics
         :return: json
         """
         response = self._request('GET', self._CLAIR_ANALYZE_URI.format(name))
+        if statistics:
+            return self.statistics(response.json())
         return response.json()
 
     def post_layer(self, data):
@@ -70,6 +73,20 @@ class ClairRequestsV1(AbstractClairRequests):
         :param name: layer's name
         """
         return self._request('DELETE', self._CLAIR_DELETE_URI.format(name))
+
+    @staticmethod
+    def statistics(clair_json):
+        """
+        Statistics from a json delivered by Clair
+
+        :param clair_json: json delivered by Clair
+        """
+        result = {}
+        for feature in clair_json.get('Layer', {}).get('Features', []):
+            for vuln in feature.get("Vulnerabilities", []):
+                if "FixedBy" in vuln:
+                    result[vuln["Severity"]] = result.setdefault(vuln["Severity"], 0) + 1
+        return result
 
     @staticmethod
     def to_clair_post_data(name, path, clair_format, **kwargs):

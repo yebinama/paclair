@@ -67,9 +67,9 @@ class DockerPlugin(AbstractPlugin):
     def create_ancestry(self, name):
         return DockerAncestry(self.create_docker_image(name))
 
-    def analyse(self, name):
+    def analyse(self, name, statistics=False):
         ancestry = self.create_ancestry(name)
-        return super().analyse(ancestry.name)
+        return super().analyse(ancestry.name, statistics)
 
     def delete(self, name):
         ancestry = self.create_ancestry(name)

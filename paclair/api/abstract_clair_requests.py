@@ -46,11 +46,12 @@ class AbstractClairRequests(LoggedObject):
         return response
 
     @abstractmethod
-    def get_ancestry(self, ancestry):
+    def get_ancestry(self, ancestry, statistics=False):
         """
         Analyse an ancestry
 
         :param ancestry: ancestry (name) to analyse
+        :param statistics: only return statistics
         :return: json
         """
         raise NotImplementedError("Implement in sub classes")

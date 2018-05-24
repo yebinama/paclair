@@ -41,25 +41,28 @@ class PaClair(LoggedObject):
         if plugin not in self._plugins:
             raise PluginNotFoundException("Plugin {} is unknown".format(plugin))
 
-    def analyse(self, plugin, name, delete=False):
+    def analyse(self, plugin, name, delete=False, statistics=False):
         """
         Analyse a layer
 
         :param plugin: plugin's name
         :param name: resource to analyse
         :param delete: delete after analyse
-        :return: json clair
+        :param statistics: only return statistics
+        :return: json clair in string format
         :raises ResourceNotFoundException: if layer not found
         :raise ClairConnectionError: if an error occurs requesting Clair
         """
         self._check_plugin(plugin)
 
         self.logger.debug("Analysing {}".format(name))
-        result = self._plugins[plugin].analyse(name)
+        result = self._plugins[plugin].analyse(name, statistics)
         if delete:
             self.logger.debug("Deleting  {}".format(name))
             self._plugins[plugin].delete(name)
-        return result
+        if statistics:
+            return '\n'.join(("{}: {}".format(k, v) for k, v in result.items()))
+        return json.dumps(result)
 
     def push(self, plugin, name):
         """
@@ -87,20 +90,6 @@ class PaClair(LoggedObject):
 
         self.logger.debug("Delete {} with plugin {}".format(name, plugin))
         self._plugins[plugin].delete(name)
-
-    @staticmethod
-    def statistics(clair_json):
-        """
-        Statistics from a json delivered by Clair
-
-        :param clair_json: json delivered by Clair
-        """
-        result = {}
-        for feature in clair_json.get('Layer', {}).get('Features', []):
-            for vuln in feature.get("Vulnerabilities", []):
-                if "FixedBy" in vuln:
-                    result[vuln["Severity"]] = result.setdefault(vuln["Severity"], 0) + 1
-        return result
 
 
 def main():
@@ -161,12 +150,8 @@ def main():
                 paclair_object.delete(args.plugin, host)
                 logger.info("{} was deleted from Clair.".format(host))
             elif args.subparser_name == "analyse":
-                result = paclair_object.analyse(args.plugin, host, args.delete)
-                if args.statistics:
-                    result = paclair_object.statistics(result)
-                    logger.info('\n'.join(("{}: {}".format(k, v) for k, v in result.items())))
-                else:
-                    logger.info(json.dumps(result))
+                result = paclair_object.analyse(args.plugin, host, args.delete, args.statistics)
+                logger.info(result)
             else:
                 parser.print_help()
         except PluginNotFoundException as error:

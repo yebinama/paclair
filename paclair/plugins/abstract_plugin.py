@@ -26,14 +26,15 @@ class AbstractPlugin(LoggedObject):
         self.clair_format = clair_format
         self.clair = clair
 
-    def analyse(self, name):
+    def analyse(self, name, statistics=False):
         """
         Analyse a resource
 
         :param name: resource to analyse
+        :param statistics: only return statistics
         :return: json from clair
         """
-        return self.clair.get_ancestry(name)
+        return self.clair.get_ancestry(name, statistics)
 
     def delete(self, name):
         """

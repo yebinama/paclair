@@ -27,7 +27,22 @@ class ClairRequestsV3(AbstractClairRequests):
         Analyse an ancestry
 
         :param ancestry: ancestry (name) to analyse
+        :param statistics: only return statistics
         :return: json
         """
         response = self._request('GET', self._CLAIR_ANALYZE_URI.format(ancestry.replace(':', '_')))
         return response.json()
+
+    @staticmethod
+    def statistics(clair_json):
+        """
+        Statistics from a json delivered by Clair
+
+        :param clair_json: json delivered by Clair
+        """
+        result = {}
+        for feature in clair_json.get('ancestry', {}).get('features', []):
+            for vuln in feature.get("vulnerabilities", []):
+                if "fixed_by" in vuln:
+                    result[vuln["severity"]] = result.setdefault(vuln["severity"], 0) + 1
+        return result
