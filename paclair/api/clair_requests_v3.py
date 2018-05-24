@@ -45,6 +45,6 @@ class ClairRequestsV3(AbstractClairRequests):
         result = {}
         for feature in clair_json.get('ancestry', {}).get('features', []):
             for vuln in feature.get("vulnerabilities", []):
-                if "fixed_by" in vuln:
+                if "fixedBy" in vuln:
                     result[vuln["severity"]] = result.setdefault(vuln["severity"], 0) + 1
         return result
