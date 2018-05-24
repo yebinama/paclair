@@ -22,7 +22,7 @@ class ClairRequestsV3(AbstractClairRequests):
         json['ancestry_name'] = ancestry.name.replace(':', '_')
         return self._request('POST', self._CLAIR_POST_URI, json=json)
 
-    def get_ancestry(self, ancestry):
+    def get_ancestry(self, ancestry, statistics=False):
         """
         Analyse an ancestry
 
@@ -31,6 +31,8 @@ class ClairRequestsV3(AbstractClairRequests):
         :return: json
         """
         response = self._request('GET', self._CLAIR_ANALYZE_URI.format(ancestry.replace(':', '_')))
+        if statistics:
+            return self.statistics(response.json())
         return response.json()
 
     @staticmethod
