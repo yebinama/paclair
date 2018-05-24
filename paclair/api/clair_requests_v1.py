@@ -12,14 +12,18 @@ class ClairRequestsV1(AbstractClairRequests):
     _CLAIR_POST_URI = "/v1/layers"
     _CLAIR_DELETE_URI = "/v1/layers/{}"
 
-    def get_ancestry(self, ancestry):
+    def get_ancestry(self, ancestry, statistics=False):
         """
         Analyse an ancestry
 
         :param ancestry: ancestry (name) to analyse
+        :param statistics: only return statistics
         :return: json
         """
-        return self.get_layer(ancestry)
+        response = self.get_layer(ancestry)
+        if statistics:
+            return self.statistics(response)
+        return response
 
     def post_ancestry(self, ancestry):
         """
@@ -44,17 +48,14 @@ class ClairRequestsV1(AbstractClairRequests):
         for layer in ancestry.layers[::-1]:
             self.delete_layer(layer.name)
 
-    def get_layer(self, name, statistics=False):
+    def get_layer(self, name):
         """
         Analyse a layer
 
         :param name: layer's name
-        :param statistics: only return statistics
         :return: json
         """
         response = self._request('GET', self._CLAIR_ANALYZE_URI.format(name))
-        if statistics:
-            return self.statistics(response.json())
         return response.json()
 
     def post_layer(self, data):
