@@ -70,7 +70,3 @@ class DockerPlugin(AbstractPlugin):
     def analyse(self, name, statistics=False):
         ancestry = self.create_ancestry(name)
         return super().analyse(ancestry.name, statistics)
-
-    def delete(self, name):
-        ancestry = self.create_ancestry(name)
-        return super().delete(ancestry.name)
