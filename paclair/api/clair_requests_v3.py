@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from paclair.api.abstract_clair_requests import AbstractClairRequests
+from paclair.exceptions import PaclairException
 
 
 class ClairRequestsV3(AbstractClairRequests):
@@ -34,6 +35,14 @@ class ClairRequestsV3(AbstractClairRequests):
         if statistics:
             return self.statistics(response.json())
         return response.json()
+
+    def delete_ancestry(self, ancestry):
+        """
+        Delete ancestry from Clair
+
+        :param ancestry: ancestry to delete
+        """
+        raise PaclairException("Delete is not available for V3 api")
 
     @staticmethod
     def statistics(clair_json):
