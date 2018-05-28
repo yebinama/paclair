@@ -60,9 +60,7 @@ class PaClair(LoggedObject):
         if delete:
             self.logger.debug("Deleting  {}".format(name))
             self._plugins[plugin].delete(name)
-        if statistics:
-            return '\n'.join(("{}: {}".format(k, v) for k, v in result.items()))
-        return json.dumps(result)
+        return result
 
     def push(self, plugin, name):
         """
@@ -151,6 +149,8 @@ def main():
                 logger.info("{} was deleted from Clair.".format(host))
             elif args.subparser_name == "analyse":
                 result = paclair_object.analyse(args.plugin, host, args.delete, args.statistics)
+                result = '\n'.join(("{}: {}".format(k, v) for k, v in result.items())) \
+                    if args.statistics else json.dumps(result)
                 logger.info(result)
             else:
                 parser.print_help()
