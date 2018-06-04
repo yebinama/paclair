@@ -4,6 +4,7 @@ import re
 
 from paclair import DOCKER_HUB_DOMAIN
 from paclair import REGEX
+from paclair.ancestries.docker import DockerAncestry
 from paclair.docker.docker_image import DockerImage
 from paclair.docker.docker_registry import DockerRegistry
 from paclair.exceptions import ResourceNotFoundException
@@ -63,29 +64,9 @@ class DockerPlugin(AbstractPlugin):
             registry = DockerRegistry(matcher.group("domain"))
         return DockerImage(matcher.group("name"), registry, repo, tag=matcher.group("tag") or 'latest')
 
-    def push(self, name):
-        docker_image = self.create_docker_image(name)
+    def create_ancestry(self, name):
+        return DockerAncestry(self.create_docker_image(name))
 
-        # Additional data
-        additional_data = {'Headers': {'Authorization': "Bearer {}".format(docker_image.token)},
-                           'ParentName': ""}
-        layers = docker_image.get_layers()
-        partial_path = docker_image.registry.get_blobs_url(docker_image, '{digest}')
-
-        # Push layers to Clair
-        for layer in layers:
-            layer_name = "{}_{}".format(layer, docker_image.short_sha)
-            data = self.clair.to_clair_post_data(layer_name, partial_path.format(digest=layer), self.clair_format,
-                                                 **additional_data)
-            self.clair.post_layer(data)
-            additional_data['ParentName'] = layer_name
-
-    def analyse(self, name):
-        docker_image = self.create_docker_image(name)
-        layer_name = "{}_{}".format(docker_image.get_layers()[-1], docker_image.short_sha)
-        return super().analyse(layer_name)
-
-    def delete(self, name):
-        docker_image = self.create_docker_image(name)
-        for layer in docker_image.get_layers()[::-1]:
-            super().delete("{}_{}".format(layer, docker_image.short_sha))
+    def analyse(self, name, statistics=False):
+        ancestry = self.create_ancestry(name)
+        return super().analyse(ancestry.name, statistics)

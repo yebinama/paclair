@@ -5,7 +5,7 @@ from unittest.mock import patch
 import requests_mock
 from elasticsearch import Elasticsearch
 
-from paclair.clair_requests import ClairRequests
+from paclair.api.clair_requests_v1 import ClairRequestsV1
 from paclair.exceptions import ResourceNotFoundException, ClairConnectionError
 from paclair.plugins.es_plugin import EsPlugin
 
@@ -16,7 +16,7 @@ class TestEsPlugin(unittest.TestCase):
     """
     
     def setUp(self):
-        self.es = EsPlugin(ClairRequests('http://localhost:6060'), [{'host': '172.18.8.10', 'port': 9200}],
+        self.es = EsPlugin(ClairRequestsV1('http://localhost:6060'), [{'host': '172.18.8.10', 'port': 9200}],
                            'hbx-confo_factssysinfo', 'factssysinfo')
         self.layer_name = "toto"
 

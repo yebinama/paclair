@@ -37,7 +37,6 @@ class DockerRegistry(LoggedObject):
         self.protocol = protocol
         self.logger.debug("INITCLASS:API_PROTOCOL:{}".format(self.protocol))
         self.auth = tuple(auth or [])
-        self.logger.debug("INITCLASS:API_AUTH:{}".format(self.auth))
         self.verify = verify
         self.logger.debug("INITCLASS:API_VERIFY:{}".format(self.verify))
         self.__token_url = token_url

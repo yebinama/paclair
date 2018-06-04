@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from paclair.clair_requests import ClairRequests
+from paclair.api.clair_requests_v1 import ClairRequestsV1
+from paclair.api.clair_requests_v3 import ClairRequestsV3
 from paclair.logged_object import LoggedObject
 from paclair.exceptions import ConfigurationError
 import importlib
@@ -28,12 +29,12 @@ class ConfigReader(LoggedObject):
         """
         with open(self.filename, 'r') as f:
             # Load
-            self.logger.debug("Reading section %s in file %s" % (section, self.filename))
+            self.logger.debug("Reading section %s in file %s", section, self.filename)
             conf = yaml.safe_load(f)
 
             # Check structure
             if section not in conf:
-                self.logger.error("No section %s in configuration file" % section)
+                self.logger.error("No section %s in configuration file", section)
                 return {}
             return conf[section]
 
@@ -46,19 +47,25 @@ class ConfigReader(LoggedObject):
         plugins = self.read_section(plugin_section)
         clair_conf = self.read_section("General")
         if not clair_conf:
-            raise ConfigurationError("Can't read Clair's configuration") 
-        clair = ClairRequests(**clair_conf)
-        result = {}
+            raise ConfigurationError("Can't read Clair's configuration")
 
+        # Read clair api class
+        clair_api_version = clair_conf.pop("clair_api_version", 1)
+        if clair_api_version == 3:
+            clair = ClairRequestsV3(**clair_conf)
+        else:
+            clair = ClairRequestsV1(**clair_conf)
+
+        result = {}
         for plugin, conf in plugins.items():
             try:
-                self.logger.debug('Reading plugin %s' % plugin)
-                self.logger.debug('Configuration %s' % conf)
+                self.logger.debug('Reading plugin %s', plugin)
+                self.logger.debug('Configuration %s', conf)
 
                 plugin_class = self._get_class(conf.pop('class'))
                 result[plugin] = plugin_class(clair, **conf)
             except (ValueError, KeyError):
-                self.logger.error("Can't read plugin %s" % plugin)
+                self.logger.error("Can't read plugin %s", plugin)
 
         return result
 

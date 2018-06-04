@@ -5,6 +5,7 @@ Paclair is a Python3 Cli tool to interact with `Coreos's Clair <https://github.c
 
 Features:
 
+- Now compatible with Clair V3 (delete is not available)
 - No need to have docker installed since Paclair interacts directly with the registries.
 - Compatible with all registries.
 - Simple to use.
@@ -66,6 +67,11 @@ Options
 |                                   | server’s TLS certificate, or a    |
 |                                   | string, in which case it must be  |
 |                                   | a path to a CA bundle to use.     |
++-----------------------------------+-----------------------------------+
+| General::clair_api_version        | Clair Api Version                 |
+|                                   | If different from 3, will be set  |
+|                                   | to default.                       |
+|                                   | Default to 1.                     |
 +-----------------------------------+-----------------------------------+
 | Plugins                           | List of plugins to use. If you    |
 |                                   | only want to analyse docker       |
