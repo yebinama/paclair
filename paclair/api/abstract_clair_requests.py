@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from abc import ABCMeta, abstractmethod
 from bottle import template
+from pkg_resources import resource_string
 
 import requests
 
@@ -14,7 +15,7 @@ class AbstractClairRequests(LoggedObject):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, clair_url, verify=True, html_template="template/report.tpl"):
+    def __init__(self, clair_url, verify=True, html_template=None):
         """
         Constructor
 
@@ -25,7 +26,7 @@ class AbstractClairRequests(LoggedObject):
         super().__init__()
         self.url = clair_url
         self.verify = verify
-        self.html_template = html_template
+        self.html_template = html_template or resource_string(__name__, 'template/report.tpl')
 
     def _request(self, method, uri, **kwargs):
         """
