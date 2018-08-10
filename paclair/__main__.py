@@ -41,14 +41,14 @@ class PaClair(LoggedObject):
         if plugin not in self._plugins:
             raise PluginNotFoundException("Plugin {} is unknown".format(plugin))
 
-    def analyse(self, plugin, name, delete=False, statistics=False):
+    def analyse(self, plugin, name, delete=False, output=None):
         """
         Analyse a layer
 
         :param plugin: plugin's name
         :param name: resource to analyse
         :param delete: delete after analyse
-        :param statistics: only return statistics
+        :param output: change default output
         :return: json clair in string format
         :raises ResourceNotFoundException: if layer not found
         :raise ClairConnectionError: if an error occurs requesting Clair
@@ -56,7 +56,7 @@ class PaClair(LoggedObject):
         self._check_plugin(plugin)
 
         self.logger.debug("Analysing {}".format(name))
-        result = self._plugins[plugin].analyse(name, statistics)
+        result = self._plugins[plugin].analyse(name, output)
         if delete:
             self.logger.debug("Deleting  {}".format(name))
             self._plugins[plugin].delete(name)
@@ -108,7 +108,7 @@ def main():
     subparsers.add_parser("push", help="Push images/hosts to Clair")
     subparsers.add_parser("delete", help="Delete images/hosts from Clair")
     parser_analyse = subparsers.add_parser("analyse", help="Analyse images/hosts already pushed to Clair")
-    parser_analyse.add_argument("--statistics", help="Only print statistics", action="store_true")
+    parser_analyse.add_argument("--output", help="Change default output", choices=['stats', 'html'])
     parser_analyse.add_argument("--delete", help="Delete after analyse", action="store_true")
 
     # Parse args
@@ -148,9 +148,9 @@ def main():
                 paclair_object.delete(args.plugin, host)
                 logger.info("{} was deleted from Clair.".format(host))
             elif args.subparser_name == "analyse":
-                result = paclair_object.analyse(args.plugin, host, args.delete, args.statistics)
+                result = paclair_object.analyse(args.plugin, host, args.delete, args.output)
                 result = '\n'.join(("{}: {}".format(k, v) for k, v in result.items())) \
-                    if args.statistics else json.dumps(result)
+                    if args.output == "stats" else json.dumps(result)
                 logger.info(result)
             else:
                 parser.print_help()

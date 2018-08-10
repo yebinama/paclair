@@ -12,18 +12,29 @@ class ClairRequestsV1(AbstractClairRequests):
     _CLAIR_POST_URI = "/v1/layers"
     _CLAIR_DELETE_URI = "/v1/layers/{}"
 
-    def get_ancestry(self, ancestry, statistics=False):
+    def get_ancestry_json(self, ancestry):
         """
         Analyse an ancestry
 
         :param ancestry: ancestry (name) to analyse
-        :param statistics: only return statistics
         :return: json
         """
-        response = self.get_layer(ancestry)
-        if statistics:
-            return self.statistics(response)
-        return response
+        return self.get_layer(ancestry)
+
+    def get_ancestry_statistics(self, ancestry):
+        """
+        Get statistics for ancestry
+
+        :param ancestry: ancestry (name) to analyse
+        :return: statistics (dict)
+        """
+        clair_json = self.get_layer(ancestry)
+        result = {}
+        for feature in clair_json.get('Layer', {}).get('Features', []):
+            for vuln in feature.get("Vulnerabilities", []):
+                if "FixedBy" in vuln:
+                    result[vuln["Severity"]] = result.setdefault(vuln["Severity"], 0) + 1
+        return result
 
     def post_ancestry(self, ancestry):
         """
@@ -75,19 +86,14 @@ class ClairRequestsV1(AbstractClairRequests):
         """
         return self._request('DELETE', self._CLAIR_DELETE_URI.format(name))
 
-    @staticmethod
-    def statistics(clair_json):
+    def _clair_to_html_template(self, clair_json):
         """
-        Statistics from a json delivered by Clair
+        Convert clair_json into a list for the bottle template
 
-        :param clair_json: json delivered by Clair
+        :param clair_json: json to convert
+        :return: list
         """
-        result = {}
-        for feature in clair_json.get('Layer', {}).get('Features', []):
-            for vuln in feature.get("Vulnerabilities", []):
-                if "FixedBy" in vuln:
-                    result[vuln["Severity"]] = result.setdefault(vuln["Severity"], 0) + 1
-        return result
+        return []
 
     @staticmethod
     def to_clair_post_data(name, path, clair_format, **kwargs):

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from abc import ABCMeta, abstractmethod
+from bottle import template
 
 import requests
 
@@ -13,16 +14,18 @@ class AbstractClairRequests(LoggedObject):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, clair_url, verify=True):
+    def __init__(self, clair_url, verify=True, html_template="template/report.tpl"):
         """
         Constructor
 
         :param clair_url: Clair api URL
         :param verify: request verify certificate
+        :param html_template: html template
         """
         super().__init__()
         self.url = clair_url
         self.verify = verify
+        self.html_template = html_template
 
     def _request(self, method, uri, **kwargs):
         """
@@ -45,14 +48,59 @@ class AbstractClairRequests(LoggedObject):
             raise ClairConnectionError(response)
         return response
 
-    @abstractmethod
-    def get_ancestry(self, ancestry, statistics=False):
+    def get_ancestry(self, ancestry, output=None):
         """
         Analyse an ancestry
 
         :param ancestry: ancestry (name) to analyse
-        :param statistics: only return statistics
+        :param output: change default output (choose between stats and html)
+        :return: choosed outpu
+        """
+        if output == "stats":
+            return self.get_ancestry_statistics(ancestry)
+        elif output == "html":
+            return self.get_ancestry_html(ancestry)
+        else:
+            return self.get_ancestry_json(ancestry)
+
+    @abstractmethod
+    def get_ancestry_json(self, ancestry):
+        """
+        Get json output for ancestry
+
+        :param ancestry: ancestry (name) to analyse
         :return: json
+        """
+        raise NotImplementedError("Implement in sub classes")
+
+    @abstractmethod
+    def get_ancestry_statistics(self, ancestry):
+        """
+        Get statistics for ancestry
+
+        :param ancestry: ancestry (name) to analyse
+        :return: statistics (dict)
+        """
+        raise NotImplementedError("Implement in sub classes")
+
+    @abstractmethod
+    def get_ancestry_html(self, ancestry):
+        """
+        Get html output for ancestry
+
+        :param ancestry: ancestry (name) to analyse
+        :return: html
+        """
+        clair_info = self._clair_to_html_template(self.get_ancestry_json(ancestry))
+        return template(self.html_template, info=clair_info)
+
+    @abstractmethod
+    def _clair_to_html_template(self, clair_json):
+        """
+        Convert clair_json into a list for the bottle template
+
+        :param clair_json: json to convert
+        :return: list
         """
         raise NotImplementedError("Implement in sub classes")
 
@@ -73,3 +121,25 @@ class AbstractClairRequests(LoggedObject):
         :param ancestry: ancestry to delete
         """
         raise NotImplementedError("Implement in sub classes")
+
+    @staticmethod
+    def split_vectors(vectors):
+        """
+        Convert nvd metadata ("AV:N/AC:L/Au:N/C:N/I:N") into a dict
+
+        :param vectors: string like "AV:N/AC:L/Au:N/C:N/I:N"
+        :return: dict
+        """
+        NPC = {'N': 'None', 'P': 'Partial', 'C': 'Complete'}
+        VECTORS = {'AV': ('Access Vector', {'L': 'Local', 'A': 'Adjacent Network', 'N': 'Network'}),
+                   'AC': ('Access Complexity', {'H': 'High', 'M': 'Medium', 'L': 'Low'}),
+                   'Au': ('Authentication', {'S': 'Single', 'M': 'Multiple', 'N': 'None'}),
+                   'C': ('Confidentiality impact', NPC),
+                   'I': ('Integrity impact', NPC),
+                   'A': ('Availability impact', NPC)}
+        try:
+            dict_vectors = dict((vector.split(':') for vector in vectors.split('/')))
+        except ValueError:
+            dict_vectors = {}
+
+        return {v[0]: v[1].get(dict_vectors.get(metric), "") for metric, v in VECTORS.items()}
