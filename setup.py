@@ -14,7 +14,7 @@ setup(name="paclair",
       url="https://github.com/yebinama/paclair",
       packages=["paclair", "paclair/api", "paclair/plugins", "paclair/docker", "paclair/ancestries"],
       package_data={
-        "paclair": ['template/report.tpl']
+        "paclair": ['api/template/report.tpl']
       },
       install_requires=[
           'elasticsearch',
