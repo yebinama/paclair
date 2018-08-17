@@ -100,6 +100,7 @@ def main():
     parser.add_argument("--debug", help="Debug mode", action="store_true")
     parser.add_argument("--syslog", help="Log to syslog", action="store_true")
     parser.add_argument("--conf", help="Conf file", action="store", default=DEFAULT_CONFIG_FILE)
+    parser.add_argument("--report", help="Change report format", choices=['logger', 'file', 'term'])
     parser.add_argument("plugin", help="Plugin to launch", action="store")
     parser.add_argument("hosts", help="Image/hostname to analyse", nargs='+', action="store")
 
@@ -151,7 +152,6 @@ def main():
                 result = paclair_object.analyse(args.plugin, host, args.delete, args.output)
                 result = '\n'.join(("{}: {}".format(k, v) for k, v in result.items())) \
                     if args.output == "stats" else json.dumps(result)
-                logger.info(result)
             else:
                 parser.print_help()
         except PluginNotFoundException as error:
@@ -162,6 +162,19 @@ def main():
             logger.error("Error treating {}".format(host))
             logger.error(error)
             sys.exit(2)
+        # Report
+        if args.report == "term":
+            print(result)
+        elif args.report == "file":
+            try:
+                filename = '{}.{}'.format(host, args.output or json)
+                with open(filename, "w", encoding="utf-8") as report_file:
+                    report_file.write(result)
+            except (OSError, IOError):
+                logger.error("Can't write {}".format(filename))
+                sys.exit(2)
+        else:
+            logger.info(result)
 
 
 if __name__ == "__main__":
