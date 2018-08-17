@@ -2,6 +2,7 @@
 
 from paclair.api.abstract_clair_requests import AbstractClairRequests
 from paclair.exceptions import PaclairException
+from paclair.struct import InsensitiveCaseDict
 
 
 class ClairRequestsV3(AbstractClairRequests):
@@ -33,21 +34,6 @@ class ClairRequestsV3(AbstractClairRequests):
         response = self._request('GET', self._CLAIR_ANALYZE_URI.format(ancestry.replace(':', '_')))
         return response.json()
 
-    def get_ancestry_statistics(self, ancestry):
-        """
-        Get statistics for ancestry
-
-        :param ancestry: ancestry (name) to analyse
-        :return: statistics (dict)
-        """
-        clair_json = self.get_ancestry_json(ancestry)
-        result = {}
-        for feature in clair_json.get('ancestry', {}).get('features', []):
-            for vuln in feature.get("vulnerabilities", []):
-                if "fixedBy" in vuln:
-                    result[vuln["severity"]] = result.setdefault(vuln["severity"], 0) + 1
-        return result
-
     def delete_ancestry(self, ancestry):
         """
         Delete ancestry from Clair
@@ -64,3 +50,7 @@ class ClairRequestsV3(AbstractClairRequests):
         :return: list
         """
         return []
+
+    def _iter_features(self, clair_json):
+        for feature in clair_json.get("ancestry", {}).get("features", {}):
+            yield InsensitiveCaseDict(feature)

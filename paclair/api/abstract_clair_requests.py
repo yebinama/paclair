@@ -7,6 +7,7 @@ import requests
 
 from paclair.exceptions import ResourceNotFoundException, ClairConnectionError
 from paclair.logged_object import LoggedObject
+from paclair.struct import InsensitiveCaseDict
 
 
 class AbstractClairRequests(LoggedObject):
@@ -74,7 +75,6 @@ class AbstractClairRequests(LoggedObject):
         """
         raise NotImplementedError("Implement in sub classes")
 
-    @abstractmethod
     def get_ancestry_statistics(self, ancestry):
         """
         Get statistics for ancestry
@@ -82,7 +82,14 @@ class AbstractClairRequests(LoggedObject):
         :param ancestry: ancestry (name) to analyse
         :return: statistics (dict)
         """
-        raise NotImplementedError("Implement in sub classes")
+        clair_json = self.get_ancestry_json(ancestry)
+        result = {}
+        for feature in self._iter_features(clair_json):
+            for vuln in feature.get("vulnerabilities", []):
+                vuln = InsensitiveCaseDict(vuln)
+                if "fixedBy" in vuln:
+                    result[vuln["severity"]] = result.setdefault(vuln["severity"], 0) + 1
+        return result
 
     @abstractmethod
     def get_ancestry_html(self, ancestry):
@@ -144,3 +151,12 @@ class AbstractClairRequests(LoggedObject):
             dict_vectors = {}
 
         return {v[0]: v[1].get(dict_vectors.get(metric), "") for metric, v in VECTORS.items()}
+
+    @abstractmethod
+    def _iter_features(self, clair_json):
+        """
+        Iterate over features from clair_json via CaseInsensitiveDict
+
+        :param clair_json: json to iterate overs
+        """
+        raise NotImplementedError("Implement in sub classes")

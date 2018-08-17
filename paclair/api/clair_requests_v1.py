@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from paclair.api.abstract_clair_requests import AbstractClairRequests
+from paclair.struct import InsensitiveCaseDict
 
 
 class ClairRequestsV1(AbstractClairRequests):
@@ -20,21 +21,6 @@ class ClairRequestsV1(AbstractClairRequests):
         :return: json
         """
         return self.get_layer(ancestry)
-
-    def get_ancestry_statistics(self, ancestry):
-        """
-        Get statistics for ancestry
-
-        :param ancestry: ancestry (name) to analyse
-        :return: statistics (dict)
-        """
-        clair_json = self.get_layer(ancestry)
-        result = {}
-        for feature in clair_json.get('Layer', {}).get('Features', []):
-            for vuln in feature.get("Vulnerabilities", []):
-                if "FixedBy" in vuln:
-                    result[vuln["Severity"]] = result.setdefault(vuln["Severity"], 0) + 1
-        return result
 
     def post_ancestry(self, ancestry):
         """
@@ -93,7 +79,23 @@ class ClairRequestsV1(AbstractClairRequests):
         :param clair_json: json to convert
         :return: list
         """
-        return []
+        result = []
+        for feature in clair_json["Layer"].get("Features", {}):
+            for vuln in feature.get("Vulnerabilities", {}):
+                cvss = vuln.get("Metadata", {}).get('NVD', {}).get("CVSSv2", {})
+                cvss_vector = self.split_vectors(cvss.get('Vectors', ""))
+                result.append({"ID": len(result),
+                               "CVE": vuln.get("Name"),
+                               "SEVERITY": vuln.get("Severity"),
+                               "PACKAGE": feature.get("Name"),
+                               "CURRENT": feature.get("Version"),
+                               "FIXED": vuln.get("FixedBy", ""),
+                               "INTRODUCED": feature.get("AddedBy"),
+                               "DESCRIPTION": vuln.get("Description"),
+                               "LINK": vuln.get("Link"),
+                               "VECTORS": cvss_vector,
+                               "SCORE": cvss.get("Score")})
+        return result
 
     @staticmethod
     def to_clair_post_data(name, path, clair_format, **kwargs):
@@ -109,3 +111,7 @@ class ClairRequestsV1(AbstractClairRequests):
         data = {"Layer": {"Name": name, "Path": path, "Format": clair_format}}
         data["Layer"].update(kwargs)
         return data
+
+    def _iter_features(self, clair_json):
+        for feature in clair_json.get("Layer", {}).get("Features", {}):
+            yield InsensitiveCaseDict(feature)
