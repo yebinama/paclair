@@ -72,31 +72,6 @@ class ClairRequestsV1(AbstractClairRequests):
         """
         return self._request('DELETE', self._CLAIR_DELETE_URI.format(name))
 
-    def _clair_to_html_template(self, clair_json):
-        """
-        Convert clair_json into a list for the bottle template
-
-        :param clair_json: json to convert
-        :return: list
-        """
-        result = []
-        for feature in clair_json["Layer"].get("Features", {}):
-            for vuln in feature.get("Vulnerabilities", {}):
-                cvss = vuln.get("Metadata", {}).get('NVD', {}).get("CVSSv2", {})
-                cvss_vector = self.split_vectors(cvss.get('Vectors', ""))
-                result.append({"ID": len(result),
-                               "CVE": vuln.get("Name"),
-                               "SEVERITY": vuln.get("Severity"),
-                               "PACKAGE": feature.get("Name"),
-                               "CURRENT": feature.get("Version"),
-                               "FIXED": vuln.get("FixedBy", ""),
-                               "INTRODUCED": feature.get("AddedBy"),
-                               "DESCRIPTION": vuln.get("Description"),
-                               "LINK": vuln.get("Link"),
-                               "VECTORS": cvss_vector,
-                               "SCORE": cvss.get("Score")})
-        return result
-
     @staticmethod
     def to_clair_post_data(name, path, clair_format, **kwargs):
         """
