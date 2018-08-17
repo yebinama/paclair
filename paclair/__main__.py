@@ -61,7 +61,7 @@ class PaClair(LoggedObject):
 
         if output == "stats":
             result = '\n'.join(("{}: {}".format(k, v) for k, v in result.items()))
-        elif output == "json":
+        elif output != "html":
             result = json.dumps(result)
 
         if delete:
@@ -161,7 +161,7 @@ def main():
                 if args.report == "term":
                     print(result)
                 elif args.report == "file":
-                    filename = '{}.{}'.format(host, args.output or json)
+                    filename = '{}.{}'.format(host, args.output or 'json')
                     with open(filename, "w", encoding="utf-8") as report_file:
                         report_file.write(result)
                 else:

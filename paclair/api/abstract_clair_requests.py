@@ -57,7 +57,7 @@ class AbstractClairRequests(LoggedObject):
 
         :param ancestry: ancestry (name) to analyse
         :param output: change default output (choose between stats and html)
-        :return: choosed outpu
+        :return: choosed output
         """
         if output == "stats":
             return self.get_ancestry_statistics(ancestry)
