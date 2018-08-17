@@ -35,6 +35,7 @@ class PaClair(LoggedObject):
     def _check_plugin(self, plugin):
         """
         Check if plugin is available
+
         :param plugin: plugin to check
         :raises PluginNotFoundException: if not found
         """
@@ -49,7 +50,7 @@ class PaClair(LoggedObject):
         :param name: resource to analyse
         :param delete: delete after analyse
         :param output: change default output
-        :return: json clair in string format
+        :return: string
         :raises ResourceNotFoundException: if layer not found
         :raise ClairConnectionError: if an error occurs requesting Clair
         """
@@ -57,6 +58,12 @@ class PaClair(LoggedObject):
 
         self.logger.debug("Analysing {}".format(name))
         result = self._plugins[plugin].analyse(name, output)
+
+        if output == "stats":
+            result = '\n'.join(("{}: {}".format(k, v) for k, v in result.items()))
+        elif output == "json":
+            result = json.dumps(result)
+
         if delete:
             self.logger.debug("Deleting  {}".format(name))
             self._plugins[plugin].delete(name)
@@ -150,8 +157,15 @@ def main():
                 logger.info("{} was deleted from Clair.".format(host))
             elif args.subparser_name == "analyse":
                 result = paclair_object.analyse(args.plugin, host, args.delete, args.output)
-                result = '\n'.join(("{}: {}".format(k, v) for k, v in result.items())) \
-                    if args.output == "stats" else json.dumps(result)
+                # Report
+                if args.report == "term":
+                    print(result)
+                elif args.report == "file":
+                    filename = '{}.{}'.format(host, args.output or json)
+                    with open(filename, "w", encoding="utf-8") as report_file:
+                        report_file.write(result)
+                else:
+                    logger.info(result)
             else:
                 parser.print_help()
         except PluginNotFoundException as error:
@@ -161,20 +175,10 @@ def main():
         except PaclairException as error:
             logger.error("Error treating {}".format(host))
             logger.error(error)
-            sys.exit(2)
-        # Report
-        if args.report == "term":
-            print(result)
-        elif args.report == "file":
-            try:
-                filename = '{}.{}'.format(host, args.output or json)
-                with open(filename, "w", encoding="utf-8") as report_file:
-                    report_file.write(result)
-            except (OSError, IOError):
-                logger.error("Can't write {}".format(filename))
-                sys.exit(2)
-        else:
-            logger.info(result)
+            sys.exit(3)
+        except (OSError, IOError):
+            logger.error("Can't write in current directory")
+            sys.exit(4)
 
 
 if __name__ == "__main__":
