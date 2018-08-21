@@ -1,5 +1,4 @@
 <html>
-
 <head>
     <META http-equiv="Content-Type" content="text/html">
     <style>
@@ -174,6 +173,34 @@
         }
     </style>
     <script>
+        
+        var cvss = {"Access Vector" : "This metric reflects how the vulnerability is exploited. The more remote an attacker can be to attack a host, the greater the vulnerability score.",
+                    "Access Complexity" : "This metric measures the complexity of the attack required to exploit the vulnerability once an attacker has gained access to the target system. For example, consider a buffer overflow in an Internet service: once the target system is located, the attacker can launch an exploit at will.",
+                    "Authentication" : "This metric measures the number of times an attacker must authenticate to a target in order to exploit a vulnerability. This metric does not gauge the strength or complexity of the authentication process, only that an attacker is required to provide credentials before an exploit may occur.&nbsp;  The fewer authentication instances that are required, the higher the vulnerability score.",
+                    "Confidentiality Impact" : "This metric measures the impact on confidentiality of a successfully exploited vulnerability. Confidentiality refers to limiting information access and disclosure to only authorized users, as well as preventing access by, or disclosure to, unauthorized ones. Increased confidentiality impact increases the vulnerability score.",
+                    "Integrity Impact" : "This metric measures the impact to integrity of a successfully exploited vulnerability. Integrity refers to the trustworthiness and guaranteed veracity of information. Increased integrity impact increases the vulnerability score.",
+                    "Availability Impact" : "This metric measures the impact to availability of a successfully exploited vulnerability. Availability refers to the accessibility of information resources. Increased availability impact increases the vulnerability score." };
+
+        var av = {"Network": "A vulnerability exploitable with network access means the vulnerable software is bound to the network stack and the attacker does not require local network access or local access.  Such a vulnerability is often termed \"remotely exploitable\".  An example of a network attack is an RPC buffer overflow.",
+                  "Adjacent Network" : "A vulnerability exploitable with adjacent network access requires the attacker to have access to either the broadcast or collision domain of the vulnerable software.  Examples of local networks include local IP subnet, Bluetooth, IEEE 802.11, and local Ethernet segment.",
+                  "Local": "A vulnerability exploitable with only local access requires the attacker to have either physical access to the vulnerable system or a local (shell) account. Examples of locally exploitable vulnerabilities are peripheral attacks such as Firewire/USB DMA attacks, and local privilege escalations (e.g., sudo)."},
+            ac = {"Low" : "Specialized access conditions or extenuating circumstances do not exist making this easy to exploit",
+                  "Medium" : "The access conditions are somewhat specialized making this somewhat difficult to exploit",
+                  "High" : "Specialized access conditions exist making this harder to exploit" },
+            au = {"None" : "Authentication is not required to exploit the vulnerability.",
+                  "Single" : "The vulnerability requires an attacker to be logged into the system (such as at a command line or via a desktop session or web interface).",
+                  "Multiple" : "Exploiting the vulnerability requires that the attacker authenticate two or more times, even if the same credentials are used each time. An example is an attacker authenticating to an operating system in addition to providing credentials to access an application hosted on that system."},
+            C = {"Complete" : "There is total information disclosure, resulting in all system files being revealed. The attacker is able to read all of the system's data (memory, files, etc.)",
+                 "Partial" : "There is considerable informational disclosure. Access to some system files is possible, but the attacker does not have control over what is obtained, or the scope of the loss is constrained. An example is a vulnerability that divulges only certain tables in a database.",
+                 "None" : "There is no impact to the confidentiality of the system."},
+            I = {"Complete" : "There is a total compromise of system integrity. There is a complete loss of system protection, resulting in the entire system being compromised. The attacker is able to modify any files on the target system",
+                 "Partial" : "Modification of some system files or information is possible, but the attacker does not have control over what can be modified, or the scope of what the attacker can affect is limited. For example, system or application files may be overwritten or modified, but either the attacker has no control over which files are affected or the attacker can modify files within only a limited context or scope.",
+                 "None" : "There is no impact to the integrity of the system."},
+            A = {"Complete" : "There is a total shutdown of the affected resource. The attacker can render the resource completely unavailable.",
+                 "Partial" : "There is reduced performance or interruptions in resource availability. An example is a network-based flood attack that permits a limited number of successful connections to an Internet service.",
+                 "None" : "There is no impact to the availability of the system."};
+                  
+
         function filter() {
             var x = document.getElementById('filter'),
                 y = document.getElementsByClassName('fixed'),
@@ -192,6 +219,10 @@
                 }
             }
             compute();
+        }
+
+        function showtooltip(obj, name) {
+            obj.attributes.tooltip.value = (name === undefined) ? '' : name;
         }
 
         function switcher(id) {
@@ -216,7 +247,7 @@
 
             var res = 0, i = 0;
             for (var sev in t) {
-                res = 200 * (t[sev] / total);
+                res = (total === 0) ? 0 : 200 * (t[sev] / total);
                 document.getElementById(sev).style.height = Math.ceil(res);
                 document.getElementById(sev).attributes.tooltip.value = sev + ": " + t[sev] + " (" + Math.round(res / 2) + "%" + ")";
                 document.getElementById("risk").rows[0].children[i++].firstChild.nodeValue = t[sev];
@@ -304,74 +335,74 @@
 
                         <div>
                             <dl>
-                                <dt tooltip="This metric reflects how the vulnerability is exploited. The more remote an attacker can be to attack a host, the greater the vulnerability score.">Access Vector</dt>
-                                <dd tooltip="A vulnerability exploitable with network access means the vulnerable software is bound to the network stack and the attacker does not require local network access or local access.  Such a vulnerability is often termed &quot;remotely exploitable&quot;.  An example of a network attack is an RPC buffer overflow.">
+                                <dt tooltip="" onmouseover="javascript:showtooltip(this, cvss['Access Vector']);">Access Vector</dt>
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, av['Network']);">
                                     {{!"<b class='cvss_crit'>Network</b>" if line["VECTORS"]["Access Vector"] == "Network" else "Network" }}
                                 </dd>
-                                <dd tooltip="A vulnerability exploitable with adjacent network access requires the attacker to have access to either the broadcast or collision domain of the vulnerable software.  Examples of local networks include local IP subnet, Bluetooth, IEEE 802.11, and local Ethernet segment.">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, av['Adjacent Network']);">
                                     {{!"<b class='cvss_high'>Adjacent Network</b>" if line["VECTORS"]["Access Vector"] == "Adjacent Network" else "Adjacent Network" }}
                                 </dd>
-                                <dd tooltip="A vulnerability exploitable with only local access requires the attacker to have either physical access to the vulnerable system or a local (shell) account. Examples of locally exploitable vulnerabilities are peripheral attacks such as Firewire/USB DMA attacks, and local privilege escalations (e.g., sudo).">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, av['Local']);">
                                     {{!"<b class='cvss_low'>Local</b>" if line["VECTORS"]["Access Vector"] == "Local" else "Local" }}
                                 </dd>
                             </dl>
                             <dl>
-                                <dt tooltip="This metric measures the complexity of the attack required to exploit the vulnerability once an attacker has gained access to the target system. For example, consider a buffer overflow in an Internet service: once the target system is located, the attacker can launch an exploit at will.">Access Complexity</dt>
-                                <dd tooltip="Specialized access conditions or extenuating circumstances do not exist making this easy to exploit">
+                                <dt tooltip="" onmouseover="javascript:showtooltip(this, cvss['Access Complexity']);">Access Complexity</dt>
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, ac['Low']);">
                                     {{!"<b class='cvss_crit'>Low</b>" if line["VECTORS"]["Access Complexity"] == "Low" else "Low" }}
                                 </dd>
-                                <dd tooltip="The access conditions are somewhat specialized making this somewhat difficult to exploit">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, ac['Medium']);">
                                     {{!"<b class='cvss_high'>Medium</b>" if line["VECTORS"]["Access Complexity"] == "Medium" else "Medium" }}
                                 </dd>
-                                <dd tooltip="Specialized access conditions exist making this harder to exploit">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, ac['High']);">
                                     {{!"<b class='cvss_low'>High</b>" if line["VECTORS"]["Access Complexity"] == "High" else "High" }}
                                 </dd>
                             </dl>
                             <dl>
-                                <dt tooltip="This metric measures the number of times an attacker must authenticate to a target in order to exploit a vulnerability. This metric does not gauge the strength or complexity of the authentication process, only that an attacker is required to provide credentials before an exploit may occur.&nbsp;  The fewer authentication instances that are required, the higher the vulnerability score.">Authentication</dt>
-                                <dd tooltip="Authentication is not required to exploit the vulnerability.">
+                                <dt tooltip="" onmouseover="javascript:showtooltip(this, cvss['Authentication']);">Authentication</dt>
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, au['None']);">
                                     {{!"<b class='cvss_crit'>None</b>" if line["VECTORS"]["Authentication"] == "None" else "None" }}
                                 </dd>
-                                <dd tooltip="The vulnerability requires an attacker to be logged into the system (such as at a command line or via a desktop session or web interface).">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, au['Single']);">
                                     {{!"<b class='cvss_high'>Single</b>" if line["VECTORS"]["Authentication"] == "Single" else "Single" }}
                                 </dd>
-                                <dd tooltip="Exploiting the vulnerability requires that the attacker authenticate two or more times, even if the same credentials are used each time. An example is an attacker authenticating to an operating system in addition to providing credentials to access an application hosted on that system.">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, au['Multiple']);">
                                     {{!"<b class='cvss_low'>Multiple</b>" if line["VECTORS"]["Authentication"] == "Multiple" else "Multiple" }}
                                 </dd>
                             </dl>
                             <dl>
-                                <dt tooltip="This metric measures the impact on confidentiality of a successfully exploited vulnerability. Confidentiality refers to limiting information access and disclosure to only authorized users, as well as preventing access by, or disclosure to, unauthorized ones. Increased confidentiality impact increases the vulnerability score.">Confidentiality Impact</dt>
-                                <dd tooltip="There is total information disclosure, resulting in all system files being revealed. The attacker is able to read all of the system's data (memory, files, etc.)">
+                                <dt tooltip="" onmouseover="javascript:showtooltip(this, cvss['Confidentiality Impact']);">Confidentiality Impact</dt>
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, C['Complete']);">
                                     {{!"<b class='cvss_crit'>Complete</b>" if line["VECTORS"]["Confidentiality impact"] == "Complete" else "Complete" }}
                                 </dd>
-                                <dd tooltip="There is considerable informational disclosure. Access to some system files is possible, but the attacker does not have control over what is obtained, or the scope of the loss is constrained. An example is a vulnerability that divulges only certain tables in a database.">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, C['Partial']);">
                                     {{!"<b class='cvss_high'>Partial</b>" if line["VECTORS"]["Confidentiality impact"] == "Partial" else "Partial" }}
                                 </dd>
-                                <dd tooltip="There is no impact to the confidentiality of the system.">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, C['None']);">
                                     {{!"<b class='cvss_low'>None</b>" if line["VECTORS"]["Confidentiality impact"] == "None" else "None" }}
                                 </dd>
                             </dl>
                             <dl>
-                                <dt tooltip="This metric measures the impact to integrity of a successfully exploited vulnerability. Integrity refers to the trustworthiness and guaranteed veracity of information. Increased integrity impact increases the vulnerability score.">Integrity Impact</dt>
-                                <dd tooltip="There is a total compromise of system integrity. There is a complete loss of system protection, resulting in the entire system being compromised. The attacker is able to modify any files on the target system">
+                                <dt tooltip="" onmouseover="javascript:showtooltip(this, cvss['Integrity Impact']);">Integrity Impact</dt>
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, I['Complete']);">
                                     {{!"<b class='cvss_crit'>Complete</b>" if line["VECTORS"]["Integrity impact"] == "Complete" else "Complete" }}
                                 </dd>
-                                <dd tooltip="Modification of some system files or information is possible, but the attacker does not have control over what can be modified, or the scope of what the attacker can affect is limited. For example, system or application files may be overwritten or modified, but either the attacker has no control over which files are affected or the attacker can modify files within only a limited context or scope.">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, I['Partial']);">
                                     {{!"<b class='cvss_high'>Partial</b>" if line["VECTORS"]["Integrity impact"] == "Partial" else "Partial" }}
                                 </dd>
-                                <dd tooltip="There is no impact to the integrity of the system.">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, I['None']);">
                                     {{!"<b class='cvss_low'>None</b>" if line["VECTORS"]["Integrity impact"] == "None" else "None" }}
                                 </dd>
                             </dl>
                             <dl>
-                                <dt tooltip="This metric measures the impact to availability of a successfully exploited vulnerability. Availability refers to the accessibility of information resources. Increased availability impact increases the vulnerability score.">Availability Impact</dt>
-                                <dd tooltip="There is a total shutdown of the affected resource. The attacker can render the resource completely unavailable.">
+                                <dt tooltip="" onmouseover="javascript:showtooltip(this, cvss['Availability Impact']);">Availability Impact</dt>
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, A['Complete']);">
                                     {{!"<b class='cvss_crit'>Complete</b>" if line["VECTORS"]["Availability impact"] == "Complete" else "Complete" }}
                                 </dd>
-                                <dd tooltip="There is reduced performance or interruptions in resource availability. An example is a network-based flood attack that permits a limited number of successful connections to an Internet service.">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, A['Partial']);">
                                     {{!"<b class='cvss_high'>Partial</b>" if line["VECTORS"]["Availability impact"] == "Partial" else "Partial" }}
                                 </dd>
-                                <dd tooltip="There is no impact to the availability of the system.">
+                                <dd tooltip="" onmouseover="javascript:showtooltip(this, A['None']);">
                                     {{!"<b class='cvss_low'>None</b>" if line["VECTORS"]["Availability impact"] == "None" else "None" }}
                                 </dd>
                             </dl>                        
