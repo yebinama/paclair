@@ -1,9 +1,10 @@
 import json
+import os
 import unittest
 
 import requests_mock
 
-from paclair import DOCKER_HUB_TOKEN_REQUEST, BASE_DIR, DOCKER_HUB_DOMAIN
+from paclair import DOCKER_HUB_TOKEN_REQUEST, DOCKER_HUB_DOMAIN
 from paclair.docker.docker_image import DockerImage
 from paclair.docker.docker_registry import DockerRegistry
 from paclair.exceptions import RegistryAccessError
@@ -12,7 +13,7 @@ from paclair.exceptions import RegistryAccessError
 # Global Variables
 ###################################################
 
-FIXTURES_FOLDER = BASE_DIR + '/paclair_tests/fixtures/'
+FIXTURES_FOLDER = os.path.join(os.path.dirname(os.path.realpath(__file__)), "fixtures/")
 
 
 class TestDockerImage(unittest.TestCase):
