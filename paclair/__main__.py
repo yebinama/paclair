@@ -107,7 +107,6 @@ def main():
     parser.add_argument("--debug", help="Debug mode", action="store_true")
     parser.add_argument("--syslog", help="Log to syslog", action="store_true")
     parser.add_argument("--conf", help="Conf file", action="store", default=DEFAULT_CONFIG_FILE)
-    parser.add_argument("--report", help="Change report format", choices=['logger', 'file', 'term'])
     parser.add_argument("plugin", help="Plugin to launch", action="store")
     parser.add_argument("hosts", help="Image/hostname to analyse", nargs='+', action="store")
 
@@ -116,7 +115,9 @@ def main():
     subparsers.add_parser("push", help="Push images/hosts to Clair")
     subparsers.add_parser("delete", help="Delete images/hosts from Clair")
     parser_analyse = subparsers.add_parser("analyse", help="Analyse images/hosts already pushed to Clair")
-    parser_analyse.add_argument("--output", help="Change default output", choices=['stats', 'html'])
+    parser_analyse.add_argument("--output-format", help="Change default output", choices=['stats', 'html'])
+    parser_analyse.add_argument("--output-report", help="Change report format", choices=['file', 'term'])
+    parser_analyse.add_argument("--output-dir", help="Change output directory", action="store", default=".")
     parser_analyse.add_argument("--delete", help="Delete after analyse", action="store_true")
 
     # Parse args
@@ -156,12 +157,12 @@ def main():
                 paclair_object.delete(args.plugin, host)
                 logger.info("{} was deleted from Clair.".format(host))
             elif args.subparser_name == "analyse":
-                result = paclair_object.analyse(args.plugin, host, args.delete, args.output)
+                result = paclair_object.analyse(args.plugin, host, args.delete, args.output_format)
                 # Report
-                if args.report == "term":
+                if args.output_report == "term":
                     print(result)
-                elif args.report == "file":
-                    filename = '{}.{}'.format(host, args.output or 'json')
+                elif args.output_report == "file":
+                    filename = os.path.join(args.output_dir, '{}.{}'.format(host, args.output_format or 'json'))
                     with open(filename, "w", encoding="utf-8") as report_file:
                         report_file.write(result)
                 else:
@@ -177,7 +178,7 @@ def main():
             logger.error(error)
             sys.exit(3)
         except (OSError, IOError):
-            logger.error("Can't write in current directory")
+            logger.error("Can't write in directory: {}".format(args.output_dir))
             sys.exit(4)
 
 
