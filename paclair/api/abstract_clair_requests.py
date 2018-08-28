@@ -162,11 +162,11 @@ class AbstractClairRequests(LoggedObject):
         """
         npc = {'N': 'None', 'P': 'Partial', 'C': 'Complete'}
         vectors = {'AV': ('Access Vector', {'L': 'Local', 'A': 'Adjacent Network', 'N': 'Network'}),
-                 'AC': ('Access Complexity', {'H': 'High', 'M': 'Medium', 'L': 'Low'}),
-                 'Au': ('Authentication', {'S': 'Single', 'M': 'Multiple', 'N': 'None'}),
-                 'C': ('Confidentiality impact', npc),
-                 'I': ('Integrity impact', npc),
-                 'A': ('Availability impact', npc)}
+                   'AC': ('Access Complexity', {'H': 'High', 'M': 'Medium', 'L': 'Low'}),
+                   'Au': ('Authentication', {'S': 'Single', 'M': 'Multiple', 'N': 'None'}),
+                   'C': ('Confidentiality impact', npc),
+                   'I': ('Integrity impact', npc),
+                   'A': ('Availability impact', npc)}
         try:
             dict_vectors = dict((vector.split(':') for vector in vectors_str.split('/')))
         except ValueError:
