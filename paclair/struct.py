@@ -33,7 +33,8 @@ class InsensitiveCaseDict(MutableMapping):
     def __len__(self):
         return len(self._storage)
 
-    def _lower(self, item):
+    @staticmethod
+    def _lower(item):
         """
         Lowercase item
 

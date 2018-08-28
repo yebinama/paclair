@@ -113,16 +113,16 @@ class AbstractClairRequests(LoggedObject):
                 cvss = metadata.get('NVD', {}).get("CVSSv2", {})
                 cvss_vector = self.split_vectors(cvss.get('Vectors', ""))
                 clair_info.append({"ID": len(clair_info),
-                               "CVE": vuln.get("Name"),
-                               "SEVERITY": vuln.get("Severity"),
-                               "PACKAGE": feature.get("Name"),
-                               "CURRENT": feature.get("Version"),
-                               "FIXED": vuln.get("FixedBy", ""),
-                               "INTRODUCED": feature.get("AddedBy"),
-                               "DESCRIPTION": vuln.get("Description"),
-                               "LINK": vuln.get("Link"),
-                               "VECTORS": cvss_vector,
-                               "SCORE": cvss.get("Score")})
+                                   "CVE": vuln.get("Name"),
+                                   "SEVERITY": vuln.get("Severity"),
+                                   "PACKAGE": feature.get("Name"),
+                                   "CURRENT": feature.get("Version"),
+                                   "FIXED": vuln.get("FixedBy", ""),
+                                   "INTRODUCED": feature.get("AddedBy"),
+                                   "DESCRIPTION": vuln.get("Description"),
+                                   "LINK": vuln.get("Link"),
+                                   "VECTORS": cvss_vector,
+                                   "SCORE": cvss.get("Score")})
         return template(self.html_template, info=clair_info)
 
     @abstractmethod
@@ -160,16 +160,16 @@ class AbstractClairRequests(LoggedObject):
         :param vectors: string like "AV:N/AC:L/Au:N/C:N/I:N"
         :return: dict
         """
-        NPC = {'N': 'None', 'P': 'Partial', 'C': 'Complete'}
-        VECTORS = {'AV': ('Access Vector', {'L': 'Local', 'A': 'Adjacent Network', 'N': 'Network'}),
+        npc = {'N': 'None', 'P': 'Partial', 'C': 'Complete'}
+        vectors = {'AV': ('Access Vector', {'L': 'Local', 'A': 'Adjacent Network', 'N': 'Network'}),
                    'AC': ('Access Complexity', {'H': 'High', 'M': 'Medium', 'L': 'Low'}),
                    'Au': ('Authentication', {'S': 'Single', 'M': 'Multiple', 'N': 'None'}),
-                   'C': ('Confidentiality impact', NPC),
-                   'I': ('Integrity impact', NPC),
-                   'A': ('Availability impact', NPC)}
+                   'C': ('Confidentiality impact', npc),
+                   'I': ('Integrity impact', npc),
+                   'A': ('Availability impact', npc)}
         try:
             dict_vectors = dict((vector.split(':') for vector in vectors.split('/')))
         except ValueError:
             dict_vectors = {}
 
-        return {v[0]: v[1].get(dict_vectors.get(metric), "") for metric, v in VECTORS.items()}
+        return {v[0]: v[1].get(dict_vectors.get(metric), "") for metric, v in vectors.items()}
