@@ -115,9 +115,12 @@ def main():
     subparsers.add_parser("push", help="Push images/hosts to Clair")
     subparsers.add_parser("delete", help="Delete images/hosts from Clair")
     parser_analyse = subparsers.add_parser("analyse", help="Analyse images/hosts already pushed to Clair")
-    parser_analyse.add_argument("--output-format", help="Change default output", choices=['stats', 'html'])
-    parser_analyse.add_argument("--output-report", help="Change report format", choices=['file', 'term'])
-    parser_analyse.add_argument("--output-dir", help="Change output directory", action="store", default=".")
+    parser_analyse.add_argument("--output-format", help="Change default output format (default: json)",
+                                choices=['stats', 'html'])
+    parser_analyse.add_argument("--output-report", help="Change report location (default: logger)",
+                                choices=['file', 'term'])
+    parser_analyse.add_argument("--output-dir", help="Change output directory (default: current)", action="store",
+                                default=".")
     parser_analyse.add_argument("--delete", help="Delete after analyse", action="store_true")
 
     # Parse args
