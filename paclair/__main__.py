@@ -165,7 +165,8 @@ def main():
                 if args.output_report == "term":
                     print(result)
                 elif args.output_report == "file":
-                    filename = os.path.join(args.output_dir, '{}.{}'.format(host, args.output_format or 'json'))
+                    filename = os.path.join(args.output_dir, '{}.{}'.format(host.replace('/', '_'), args.output_format
+                                                                            or 'json'))
                     with open(filename, "w", encoding="utf-8") as report_file:
                         report_file.write(result)
                 else:
