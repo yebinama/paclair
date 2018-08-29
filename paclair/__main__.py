@@ -167,8 +167,12 @@ def main():
                 elif args.output_report == "file":
                     filename = os.path.join(args.output_dir, '{}.{}'.format(host.replace('/', '_'), args.output_format
                                                                             or 'json'))
-                    with open(filename, "w", encoding="utf-8") as report_file:
-                        report_file.write(result)
+                    try:
+                        with open(filename, "w", encoding="utf-8") as report_file:
+                            report_file.write(result)
+                    except (OSError, IOError):
+                        logger.error("Can't write in directory: {}".format(args.output_dir))
+                        sys.exit(4)
                 else:
                     logger.info(result)
             else:
@@ -181,9 +185,6 @@ def main():
             logger.error("Error treating {}".format(host))
             logger.error(error)
             sys.exit(3)
-        except (OSError, IOError):
-            logger.error("Can't write in directory: {}".format(args.output_dir))
-            sys.exit(4)
 
 
 if __name__ == "__main__":
