@@ -51,5 +51,5 @@ class HttpPlugin(AbstractPlugin):
         name = self._clean_name(name)
         return GenericAncestry(self._clean_name(name), self.clair_format, [Layer(name, name, path)])
 
-    def analyse(self, name, statistics=False):
-        return super().analyse(self._clean_name(name), statistics)
+    def analyse(self, name, output=None):
+        return super().analyse(self._clean_name(name), output)

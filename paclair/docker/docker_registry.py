@@ -51,7 +51,7 @@ class DockerRegistry(LoggedObject):
             url = self.BASE_API_URL.format(registry=self) + "/v2/"
             self.logger.debug("REQUEST_BASE_API_URL_FOR_TOKEN_ENDPOINT:URL:{}".format(url))
 
-            response = requests.get(url, verify=self.verify, auth=self.auth)
+            response = requests.get(url, verify=self.verify)
             if not "www-authenticate" in response.headers:
                 self.logger.error("REQUEST_TOKEN:HTTPCODEERROR:{}".format(response.status_code))
                 raise RegistryAccessError("Error access to : {} \nCode Error : {}".format(url, response.status_code))

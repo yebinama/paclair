@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from paclair.api.abstract_clair_requests import AbstractClairRequests
+from paclair.struct import InsensitiveCaseDict
 
 
 class ClairRequestsV1(AbstractClairRequests):
@@ -12,18 +13,14 @@ class ClairRequestsV1(AbstractClairRequests):
     _CLAIR_POST_URI = "/v1/layers"
     _CLAIR_DELETE_URI = "/v1/layers/{}"
 
-    def get_ancestry(self, ancestry, statistics=False):
+    def get_ancestry_json(self, ancestry):
         """
         Analyse an ancestry
 
         :param ancestry: ancestry (name) to analyse
-        :param statistics: only return statistics
         :return: json
         """
-        response = self.get_layer(ancestry)
-        if statistics:
-            return self.statistics(response)
-        return response
+        return self.get_layer(ancestry)
 
     def post_ancestry(self, ancestry):
         """
@@ -76,20 +73,6 @@ class ClairRequestsV1(AbstractClairRequests):
         return self._request('DELETE', self._CLAIR_DELETE_URI.format(name))
 
     @staticmethod
-    def statistics(clair_json):
-        """
-        Statistics from a json delivered by Clair
-
-        :param clair_json: json delivered by Clair
-        """
-        result = {}
-        for feature in clair_json.get('Layer', {}).get('Features', []):
-            for vuln in feature.get("Vulnerabilities", []):
-                if "FixedBy" in vuln:
-                    result[vuln["Severity"]] = result.setdefault(vuln["Severity"], 0) + 1
-        return result
-
-    @staticmethod
     def to_clair_post_data(name, path, clair_format, **kwargs):
         """
         Helper
@@ -103,3 +86,7 @@ class ClairRequestsV1(AbstractClairRequests):
         data = {"Layer": {"Name": name, "Path": path, "Format": clair_format}}
         data["Layer"].update(kwargs)
         return data
+
+    def _iter_features(self, clair_json):
+        for feature in clair_json.get("Layer", {}).get("Features", {}):
+            yield InsensitiveCaseDict(feature)

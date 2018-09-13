@@ -35,28 +35,35 @@ class PaClair(LoggedObject):
     def _check_plugin(self, plugin):
         """
         Check if plugin is available
+
         :param plugin: plugin to check
         :raises PluginNotFoundException: if not found
         """
         if plugin not in self._plugins:
             raise PluginNotFoundException("Plugin {} is unknown".format(plugin))
 
-    def analyse(self, plugin, name, delete=False, statistics=False):
+    def analyse(self, plugin, name, delete=False, output=None):
         """
         Analyse a layer
 
         :param plugin: plugin's name
         :param name: resource to analyse
         :param delete: delete after analyse
-        :param statistics: only return statistics
-        :return: json clair in string format
+        :param output: change default output
+        :return: string
         :raises ResourceNotFoundException: if layer not found
         :raise ClairConnectionError: if an error occurs requesting Clair
         """
         self._check_plugin(plugin)
 
         self.logger.debug("Analysing {}".format(name))
-        result = self._plugins[plugin].analyse(name, statistics)
+        result = self._plugins[plugin].analyse(name, output)
+
+        if output == "stats":
+            result = '\n'.join(("{}: {}".format(k, v) for k, v in result.items()))
+        elif output != "html":
+            result = json.dumps(result)
+
         if delete:
             self.logger.debug("Deleting  {}".format(name))
             self._plugins[plugin].delete(name)
@@ -108,7 +115,12 @@ def main():
     subparsers.add_parser("push", help="Push images/hosts to Clair")
     subparsers.add_parser("delete", help="Delete images/hosts from Clair")
     parser_analyse = subparsers.add_parser("analyse", help="Analyse images/hosts already pushed to Clair")
-    parser_analyse.add_argument("--statistics", help="Only print statistics", action="store_true")
+    parser_analyse.add_argument("--output-format", help="Change default output format (default: json)",
+                                choices=['stats', 'html'])
+    parser_analyse.add_argument("--output-report", help="Change report location (default: logger)",
+                                choices=['file', 'term'])
+    parser_analyse.add_argument("--output-dir", help="Change output directory (default: current)", action="store",
+                                default=".")
     parser_analyse.add_argument("--delete", help="Delete after analyse", action="store_true")
 
     # Parse args
@@ -148,10 +160,21 @@ def main():
                 paclair_object.delete(args.plugin, host)
                 logger.info("{} was deleted from Clair.".format(host))
             elif args.subparser_name == "analyse":
-                result = paclair_object.analyse(args.plugin, host, args.delete, args.statistics)
-                result = '\n'.join(("{}: {}".format(k, v) for k, v in result.items())) \
-                    if args.statistics else json.dumps(result)
-                logger.info(result)
+                result = paclair_object.analyse(args.plugin, host, args.delete, args.output_format)
+                # Report
+                if args.output_report == "term":
+                    print(result)
+                elif args.output_report == "file":
+                    filename = os.path.join(args.output_dir, '{}.{}'.format(host.replace('/', '_'), args.output_format
+                                                                            or 'json'))
+                    try:
+                        with open(filename, "w", encoding="utf-8") as report_file:
+                            report_file.write(result)
+                    except (OSError, IOError):
+                        logger.error("Can't write in directory: {}".format(args.output_dir))
+                        sys.exit(4)
+                else:
+                    logger.info(result)
             else:
                 parser.print_help()
         except PluginNotFoundException as error:
@@ -161,7 +184,7 @@ def main():
         except PaclairException as error:
             logger.error("Error treating {}".format(host))
             logger.error(error)
-            sys.exit(2)
+            sys.exit(3)
 
 
 if __name__ == "__main__":

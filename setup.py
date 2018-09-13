@@ -13,10 +13,14 @@ setup(name="paclair",
       author="Grégoire UNBEKANDT",
       url="https://github.com/yebinama/paclair",
       packages=["paclair", "paclair/api", "paclair/plugins", "paclair/docker", "paclair/ancestries"],
+      package_data={
+        "paclair": ['api/template/report.tpl']
+      },
       install_requires=[
           'elasticsearch',
           'requests>=2.4.2',
-          'pyyaml'
+          'pyyaml',
+          'bottle'
       ],
       command_options={
                'build_sphinx': {

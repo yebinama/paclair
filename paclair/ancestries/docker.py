@@ -26,4 +26,3 @@ class DockerAncestry(GenericAncestry):
                                      partial_path.format(digest=layer), headers, parent))
             parent = layer
         self.name = self.layers[-1].name
-
