@@ -18,6 +18,8 @@ class DockerRegistry(LoggedObject):
     MANIFEST_URI = '/v2/{image.name}/manifests/{image.tag}'
     BLOBS_URI = '/v2/{image.name}/blobs/{digest}'
     TOKEN_REGEX = "Bearer realm=\"(?P<realm>.*)\",service=\"(?P<service>.*)\""
+    BASIC_REGEX = "Basic realm=\"(?P<realm>.*)\""
+    USE_BASIC_AUTH = "--USE-BASIC-AUTH--"
 
     def __init__(self, domain, token_url=None, api_prefix="", protocol="https", auth=None, verify=True):
         """
@@ -37,6 +39,7 @@ class DockerRegistry(LoggedObject):
         self.protocol = protocol
         self.logger.debug("INITCLASS:API_PROTOCOL:{}".format(self.protocol))
         self.auth = tuple(auth or [])
+        self.logger.debug("INITCLASS:AUTH:{}".format(self.auth))
         self.verify = verify
         self.logger.debug("INITCLASS:API_VERIFY:{}".format(self.verify))
         self.__token_url = token_url
@@ -52,17 +55,29 @@ class DockerRegistry(LoggedObject):
             self.logger.debug("REQUEST_BASE_API_URL_FOR_TOKEN_ENDPOINT:URL:{}".format(url))
 
             response = requests.get(url, verify=self.verify)
-            if not "www-authenticate" in response.headers:
+            header = None
+            if "www-authenticate" in response.headers:
+                header = response.headers["www-authenticate"]
+                if "WWW-Authenticate" in response.headers:
+                    header = response.headers["WWW-Authenticate"]
+
+            if header == None:
                 self.logger.error("REQUEST_TOKEN:HTTPCODEERROR:{}".format(response.status_code))
                 raise RegistryAccessError("Error access to : {} \nCode Error : {}".format(url, response.status_code))
 
-            # Find realm and service
-            matcher = re.match(self.TOKEN_REGEX, response.headers["www-authenticate"])
-            if matcher is None:
-                raise RegistryAccessError("Can't find token url")
-            self.__token_url = "{}?client_id=paclair&service={}&scope=repository:{}:pull".format(
-                matcher.group("realm"), matcher.group("service"), "{image.name}")
-            self.logger.debug("TOKEN_URL:{}".format(self.__token_url))
+
+            matcher = re.match(self.TOKEN_REGEX, header)
+            if matcher is not None:
+                self.__token_url = "{}?client_id=paclair&service={}&scope=repository:{}:pull".format(
+                    matcher.group("realm"), matcher.group("service"), "{image.name}")
+                self.logger.debug("TOKEN_URL:{}".format(self.__token_url))
+            else:
+                matcher = re.match(self.BASIC_REGEX, header)
+                if matcher is not None:
+                    self.__token_url = self.USE_BASIC_AUTH
+                    self.logger.debug("TOKEN_URL:{}".format(self.__token_url))
+                else:
+                    raise RegistryAccessError("Can't find token url")
 
         return self.__token_url
 
@@ -108,7 +123,10 @@ class DockerRegistry(LoggedObject):
         """
         # Define url
         url = self.token_url.format(registry=self, image=docker_image)
-        self.logger.debug("REQUEST_TOKEN:URL:{url}".format(url=url))
+
+        if url == self.USE_BASIC_AUTH:
+            self.logger.debug("GET_TOKEN:URL:{url}".format(url=self.__token_url))
+            return ""
 
         # Get token
         resp = requests.get(url, verify=self.verify, auth=self.auth)
@@ -134,7 +152,11 @@ class DockerRegistry(LoggedObject):
 
         # Get token
         token = self.get_token(docker_image)
-        resp = requests.get(url, verify=self.verify, headers={"Authorization": "Bearer {}".format(token)})
+        if token is not "":
+            header={"Authorization": "Bearer {}".format(token)}
+        else:
+            header={}
+        resp = requests.get(url, verify=self.verify, headers=header, auth=self.auth)
 
         if not resp.ok:
             self.logger.error("MANIFESTS:HTTPCODEERROR:{}".format(resp.status_code))
