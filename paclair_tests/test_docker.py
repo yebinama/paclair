@@ -155,7 +155,7 @@ class TestDockerImage(unittest.TestCase):
     @requests_mock.mock()
     def test_get_token(self, m):
         """
-        Test de la méthode get_layer
+        Test de la méthode get_token
         """
         domain_lambda = 'registery.host'
         registry = DockerRegistry(domain_lambda, token=self.token)
