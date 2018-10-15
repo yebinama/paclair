@@ -3,3 +3,4 @@ requests
 bottle
 pyyaml
 requests_mock
+tox
