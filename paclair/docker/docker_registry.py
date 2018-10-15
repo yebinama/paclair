@@ -19,7 +19,7 @@ class DockerRegistry(LoggedObject):
     BLOBS_URI = '/v2/{image.name}/blobs/{digest}'
     TOKEN_REGEX = "Bearer realm=\"(?P<realm>.*)\",service=\"(?P<service>.*)\""
 
-    def __init__(self, domain, token_url=None, api_prefix="", protocol="https", auth=None, verify=True):
+    def __init__(self, domain, token_url=None, api_prefix="", protocol="https", auth=None, verify=True, token=None):
         """
         Constructor
 
@@ -41,6 +41,8 @@ class DockerRegistry(LoggedObject):
         self.logger.debug("INITCLASS:API_VERIFY:{}".format(self.verify))
         self.__token_url = token_url
         self.logger.debug("INITCLASS:TOKEN_URL:{}".format(self.__token_url))
+        self.__token = token
+        self.logger.debug("INITCLASS:TOKEN:{}".format(self.__token))
 
     @property
     def token_url(self):
@@ -106,20 +108,22 @@ class DockerRegistry(LoggedObject):
         :param docker_image: paclair.docker.DockerImage
         :returns str:
         """
-        # Define url
-        url = self.token_url.format(registry=self, image=docker_image)
-        self.logger.debug("REQUEST_TOKEN:URL:{url}".format(url=url))
+        if self.__token is None:
+            # Define url
+            url = self.token_url.format(registry=self, image=docker_image)
+            self.logger.debug("REQUEST_TOKEN:URL:{url}".format(url=url))
 
-        # Get token
-        resp = requests.get(url, verify=self.verify, auth=self.auth)
-        if not resp.ok:
-            self.logger.error("REQUEST_TOKEN:HTTPCODEERROR:{}".format(resp.status_code))
-            raise RegistryAccessError("Error access to : {url} \nCode Error : {status_code}".format(
-                url=url, status_code=resp.status_code))
+            # Get token
+            resp = requests.get(url, verify=self.verify, auth=self.auth)
+            if not resp.ok:
+                self.logger.error("REQUEST_TOKEN:HTTPCODEERROR:{}".format(resp.status_code))
+                raise RegistryAccessError("Error access to : {url} \nCode Error : {status_code}".format(
+                    url=url, status_code=resp.status_code))
 
-        token = resp.json()['token']
-        self.logger.debug("TOKEN:{token}".format(token=token))
-        return token
+            token = resp.json()['token']
+            self.logger.debug("TOKEN:{token}".format(token=token))
+            return token
+        return self.__token
 
     def get_manifest(self, docker_image):
         """
