@@ -43,6 +43,15 @@ class DockerImage(LoggedObject):
         return self.registry.get_token(self)
 
     @property
+    def token_type(self):
+        """
+        Token Type for this image
+
+        :return:
+        """
+        return self.registry.get_token_type()
+
+    @property
     def sha(self):
         """
         Sha256 of the layers list (used for clair layer_name)

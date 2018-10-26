@@ -19,7 +19,7 @@ class DockerRegistry(LoggedObject):
     BLOBS_URI = '/v2/{image.name}/blobs/{digest}'
     TOKEN_REGEX = "Bearer realm=\"(?P<realm>.*)\",service=\"(?P<service>.*)\""
 
-    def __init__(self, domain, token_url=None, api_prefix="", protocol="https", auth=None, verify=True, token=None):
+    def __init__(self, domain, token_url=None, api_prefix="", protocol="https", auth=None, verify=True, token=None, token_type='Basic'):
         """
         Constructor
 
@@ -43,6 +43,8 @@ class DockerRegistry(LoggedObject):
         self.logger.debug("INITCLASS:TOKEN_URL:{}".format(self.__token_url))
         self.__token = token
         self.logger.debug("INITCLASS:TOKEN:{}".format(self.__token))
+        self.__token_type = token_type
+        self.logger.debug("INITCLASS:TOKEN_TYPE:{}".format(self.__token_type))
 
     @property
     def token_url(self):
@@ -125,6 +127,9 @@ class DockerRegistry(LoggedObject):
             return token
         return self.__token
 
+    def get_token_type(self):
+        return self.__token_type
+
     def get_manifest(self, docker_image):
         """
         Get manifest
@@ -138,7 +143,11 @@ class DockerRegistry(LoggedObject):
 
         # Get token
         token = self.get_token(docker_image)
-        resp = requests.get(url, verify=self.verify, headers={"Authorization": "Bearer {}".format(token)})
+        resp = requests.get(
+            url,
+            verify=self.verify,
+            headers={"Authorization": "{} {}".format(self.__token_type, token)}
+        )
 
         if not resp.ok:
             self.logger.error("MANIFESTS:HTTPCODEERROR:{}".format(resp.status_code))

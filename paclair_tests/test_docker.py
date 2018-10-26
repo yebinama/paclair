@@ -162,7 +162,7 @@ class TestDockerImage(unittest.TestCase):
         image = DockerImage('monimage', registry)
         # Manifest
         m.register_uri('GET', registry.get_manifest_url(image), json=self.manifestv2_json,
-                       request_headers={'Authorization': 'Bearer {token}'.format(token=self.token)})
+                       request_headers={'Authorization': 'Basic {token}'.format(token=self.token)})
 
         layers = image.get_layers()
         self.assertTrue(m.called)
