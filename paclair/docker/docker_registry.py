@@ -19,7 +19,7 @@ class DockerRegistry(LoggedObject):
     BLOBS_URI = '/v2/{image.name}/blobs/{digest}'
     TOKEN_REGEX = "Bearer realm=\"(?P<realm>.*)\",service=\"(?P<service>.*)\""
 
-    def __init__(self, domain, token_url=None, api_prefix="", protocol="https", auth=None, verify=True, token=None, token_type='Basic'):
+    def __init__(self, domain, token_url=None, api_prefix="", protocol="https", auth=None, verify=True, token=None, token_type='Bearer'):
         """
         Constructor
 
