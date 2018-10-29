@@ -103,7 +103,7 @@ class DockerRegistry(LoggedObject):
         url = self.get_base_api_url(docker_image) + self.BLOBS_URI.format(image=docker_image, digest=digest)
         return url
 
-    def get_token(self, docker_image):
+    def get_authorization(self, docker_image):
         """
         Get token
 
@@ -124,11 +124,9 @@ class DockerRegistry(LoggedObject):
 
             token = resp.json()['token']
             self.logger.debug("TOKEN:{token}".format(token=token))
-            return token
-        return self.__token
-
-    def get_token_type(self):
-        return self.__token_type
+        else:
+            token = self.__token
+        return "{token_type} {token}".format(token_type=self.__token_type, token=token)
 
     def get_manifest(self, docker_image):
         """
@@ -142,11 +140,11 @@ class DockerRegistry(LoggedObject):
         self.logger.debug("REQUESTMANIFESTS:{url}".format(url=url))
 
         # Get token
-        token = self.get_token(docker_image)
+        token = self.get_authorization(docker_image)
         resp = requests.get(
             url,
             verify=self.verify,
-            headers={"Authorization": "{} {}".format(self.__token_type, token)}
+            headers={"Authorization": "{}".format(token)}
         )
 
         if not resp.ok:

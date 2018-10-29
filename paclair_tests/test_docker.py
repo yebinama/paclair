@@ -158,7 +158,7 @@ class TestDockerImage(unittest.TestCase):
         Test de la méthode get_token
         """
         domain_lambda = 'registery.host'
-        registry = DockerRegistry(domain_lambda, token=self.token)
+        registry = DockerRegistry(domain_lambda, token=self.token, token_type='Basic')
         image = DockerImage('monimage', registry)
         # Manifest
         m.register_uri('GET', registry.get_manifest_url(image), json=self.manifestv2_json,

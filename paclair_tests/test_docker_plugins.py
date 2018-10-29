@@ -21,7 +21,7 @@ class TestDockerPlugin(unittest.TestCase):
         m.post(self.docker.clair.url + self.docker.clair._CLAIR_POST_URI,
                status_code=201, reason="OK")
         with patch.object(DockerImage, "get_layers", return_value=get_layers):
-            with patch.object(DockerImage, "token", return_value="MYTOKEN"):
+            with patch.object(DockerImage, "authorization", return_value="Basic MYTOKEN"):
                 self.docker.push('monimage:tags')
 
     @requests_mock.mock()
@@ -30,5 +30,5 @@ class TestDockerPlugin(unittest.TestCase):
         m.post(self.docker.clair.url + self.docker.clair._CLAIR_POST_URI,
                status_code=404, reason="Not Found")
         with patch.object(DockerImage, "get_layers", return_value=get_layers):
-            with patch.object(DockerImage, "token", return_value="MYTOKEN"), self.assertRaises(ResourceNotFoundException):
+            with patch.object(DockerImage, "authorization", return_value="Basic MYTOKEN"), self.assertRaises(ResourceNotFoundException):
                 self.docker.push('monimage:tags')
