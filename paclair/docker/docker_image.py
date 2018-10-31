@@ -34,13 +34,13 @@ class DockerImage(LoggedObject):
         self.logger.debug("INITCLASS:REPOSITORY:{repository}".format(repository=self.repository))
 
     @property
-    def token(self):
+    def authorization(self):
         """
         Token for this image
 
         :return:
         """
-        return self.registry.get_token(self)
+        return self.registry.get_authorization(self)
 
     @property
     def sha(self):

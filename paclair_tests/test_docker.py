@@ -153,6 +153,22 @@ class TestDockerImage(unittest.TestCase):
         self.assertEqual(layers, self.EXPECTED_LAYERS_V2)
 
     @requests_mock.mock()
+    def test_get_token(self, m):
+        """
+        Test de la méthode get_token
+        """
+        domain_lambda = 'registery.host'
+        registry = DockerRegistry(domain_lambda, token=self.token, token_type='Basic')
+        image = DockerImage('monimage', registry)
+        # Manifest
+        m.register_uri('GET', registry.get_manifest_url(image), json=self.manifestv2_json,
+                       request_headers={'Authorization': 'Basic {token}'.format(token=self.token)})
+
+        layers = image.get_layers()
+        self.assertTrue(m.called)
+        self.assertEqual(layers, self.EXPECTED_LAYERS_V2)
+
+    @requests_mock.mock()
     def test_manifest_http_error(self, m):
         """
         Http Error en cas d'erreur d'accès à la registry

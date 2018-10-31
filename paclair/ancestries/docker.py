@@ -16,7 +16,7 @@ class DockerAncestry(GenericAncestry):
         super().__init__("", "Docker")
 
         # headers
-        headers = {'Authorization': "Bearer {}".format(docker_image.token)}
+        headers = {'Authorization': "{}".format(docker_image.authorization)}
         partial_path = docker_image.registry.get_blobs_url(docker_image, '{digest}')
 
         # Create layers
