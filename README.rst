@@ -100,6 +100,13 @@ Options
 | Plugins::Docker::registries::regi | Protocol to use (http or https).  |
 | stry1::protocol                   | Default to https.                 |
 +-----------------------------------+-----------------------------------+
+| Plugins::Docker::registries::token| You can specify an authentication |
+|                                   | token (use with token_type).      |
+|                                   | Default to None.                  |
++-----------------------------------+-----------------------------------+
+| Plugins::Docker::registries::token| Specify the token type.           |
+| _type                             | Default to Bearer.                |
++-----------------------------------+-----------------------------------+
 
 Running the tests
 -----------------
