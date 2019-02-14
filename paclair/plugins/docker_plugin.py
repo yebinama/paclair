@@ -29,7 +29,7 @@ class DockerPlugin(AbstractPlugin):
         self.__registries = {domain: DockerRegistry(domain, **conf) for domain, conf in registries.items()}
         self.__docker_hub = DockerRegistry(DOCKER_HUB_DOMAIN)
         self._pattern = re.compile(REGEX['domain'] + REGEX['name'] + REGEX['tag'])
-        self._domain_pattern = re.compile(r'(?P<repository>[a-zA-Z0-9-]*)\.(?P<domain>[a-zA-Z0-9-.]*)$')
+        self._domain_pattern = re.compile(r'(?P<repository>[a-zA-Z0-9-]*)\.(?P<domain>[a-zA-Z0-9-.]*)[:0-9]*$')
 
     def create_docker_image(self, name):
         """
