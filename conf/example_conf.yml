@@ -14,11 +14,8 @@ Plugins:
           - "*****"
       # Example for a private gitlab server
       gitlab.example.com:4567:
-        # note that the token_url contains the container name in the scope argument
-        # See also: http://www.pimwiddershoven.nl/entry/request-an-api-bearer-token-from-gitlab-jwt-authentication-to-control-your-private-docker-registry
-        token_url: 'https://gitlab.example.com/jwt/auth?client_id=docker&offline_token=true&service=container_registry&scope=repository:projectname/repo/containername:pull'
-        protocol: 'https'
         # If using https with an internal CA, ensure verify is pointing to it
+        protocol: 'https'
         verify: "/etc/ssl/certs/ca-certificates.crt"
         auth:
           - "*****"
