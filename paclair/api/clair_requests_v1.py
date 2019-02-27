@@ -2,6 +2,7 @@
 
 from paclair.api.abstract_clair_requests import AbstractClairRequests
 from paclair.struct import InsensitiveCaseDict
+from bottle import template
 
 
 class ClairRequestsV1(AbstractClairRequests):
@@ -90,3 +91,30 @@ class ClairRequestsV1(AbstractClairRequests):
     def _iter_features(self, clair_json):
         for feature in clair_json.get("Layer", {}).get("Features", {}):
             yield InsensitiveCaseDict(feature)
+
+    def get_ancestry_html(self, ancestry):
+        clair_info = []
+        for feature in self._iter_features(self.get_ancestry_json(ancestry)):
+            for vuln in feature.get("vulnerabilities", {}):
+                vuln = InsensitiveCaseDict(vuln)
+                # metadata is a string in v3 and dict in v1
+                metadata = vuln.get("Metadata", {})
+                if isinstance(metadata, str):
+                    try:
+                        metadata = json.loads(metadata)
+                    except ValueError:
+                        metadata = {}
+                cvss = metadata.get('NVD', {}).get("CVSSv2", {})
+                cvss_vector = self.split_vectors(cvss.get('Vectors', ""))
+                clair_info.append({"ID": len(clair_info),
+                                   "CVE": vuln.get("Name"),
+                                   "SEVERITY": vuln.get("Severity"),
+                                   "PACKAGE": feature.get("Name"),
+                                   "CURRENT": feature.get("Version"),
+                                   "FIXED": vuln.get("FixedBy", ""),
+                                   "INTRODUCED": feature.get("AddedBy"),
+                                   "DESCRIPTION": vuln.get("Description"),
+                                   "LINK": vuln.get("Link"),
+                                   "VECTORS": cvss_vector,
+                                   "SCORE": cvss.get("Score")})
+        return template(self.html_template, info=clair_info)
