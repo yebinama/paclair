@@ -16,7 +16,7 @@ class AbstractClairRequests(LoggedObject):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, clair_url, verify=True, html_template=None):
+    def __init__(self, clair_url, cve_whitelist=[], verify=True, html_template=None):
         """
         Constructor
 
@@ -26,6 +26,7 @@ class AbstractClairRequests(LoggedObject):
         """
         super().__init__()
         self.url = clair_url
+        self.whitelist = cve_whitelist
         self.verify = verify
         self.html_template = html_template or resource_filename(__name__, 'template/report.tpl')
 
@@ -91,7 +92,6 @@ class AbstractClairRequests(LoggedObject):
                     result[vuln["severity"]] = result.setdefault(vuln["severity"], 0) + 1
         return result
 
-    @abstractmethod
     def get_ancestry_html(self, ancestry):
         """
         Get html output for ancestry

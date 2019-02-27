@@ -64,15 +64,16 @@ class ClairRequestsV3(AbstractClairRequests):
                             metadata = {}
                     cvss = metadata.get('NVD', {}).get("CVSSv2", {})
                     cvss_vector = self.split_vectors(cvss.get('Vectors', ""))
-                    clair_info.append({"ID": len(clair_info),
-                                       "CVE": vuln.get("Name"),
-                                       "SEVERITY": vuln.get("Severity"),
-                                       "PACKAGE": feature.get("Name"),
-                                       "CURRENT": feature.get("Version"),
-                                       "FIXED": vuln.get("fixed_by", ""),
-                                       "INTRODUCED": layer.get("layer").get("hash"),
-                                       "DESCRIPTION": vuln.get("Description"),
-                                       "LINK": vuln.get("Link"),
-                                       "VECTORS": cvss_vector,
-                                       "SCORE": cvss.get("Score")})
+                    if vuln.get("Name") not in self.whitelist:
+                        clair_info.append({"ID": len(clair_info),
+                                           "CVE": vuln.get("Name"),
+                                           "SEVERITY": vuln.get("Severity"),
+                                           "PACKAGE": feature.get("Name"),
+                                           "CURRENT": feature.get("Version"),
+                                           "FIXED": vuln.get("fixed_by", ""),
+                                           "INTRODUCED": layer.get("layer").get("hash"),
+                                           "DESCRIPTION": vuln.get("Description"),
+                                           "LINK": vuln.get("Link"),
+                                           "VECTORS": cvss_vector,
+                                           "SCORE": cvss.get("Score")})
         return template(self.html_template, info=clair_info)

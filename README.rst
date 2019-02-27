@@ -77,6 +77,10 @@ Options
 |                                   | You can use a custom html template|
 |                                   | when using html output.           |
 +-----------------------------------+-----------------------------------+
+| General::cve_whitelist            | CVE vulnerability list not to be  |
+|                                   | included in the report post       |
+|                                   | analysis.                         |
++-----------------------------------+-----------------------------------+
 | Plugins                           | List of plugins to use. If you    |
 |                                   | only want to analyse docker       |
 |                                   | images, keep the default          |
