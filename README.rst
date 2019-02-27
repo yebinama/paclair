@@ -33,18 +33,39 @@ An example configuration file is available in the conf directory
 
 ::
 
-    General:
-      clair_url: 'https://localhost:6060'
-      verify: "/etc/ssl/certs/my_custom_ca.crt"
-    Plugins:
-      Docker:
-        class: paclair.plugins.docker_plugin.DockerPlugin
-        registries:
-          registry.gitlab.domain.com:
-            auth:
-              - "*****"
-              - "*****"
-            verify: "/etc/ssl/certs/ca-certificates.crt"
+  General:
+    clair_url: 'https://localhost:6060'
+    # clair_api_version: 3
+    # Whitelist known CVE's not to shown in html report
+    # cve_whitelist:
+    #   - CVE-2016-9843
+    #   - CVE-2016-9840
+    #   - CVE-2016-6313
+  Plugins:
+    Docker:
+      class: paclair.plugins.docker_plugin.DockerPlugin
+      registries:
+        artifactory.registry.com:
+          token_url: "https://artifactory.registry.com/api/docker/{image.repository}/v2/token?service=artifactory.registry.com"
+          protocol: 'http'
+          api_prefix: '/api/docker/{image.repository}'
+        registry.gitlab.domain.com:
+          auth:
+            - "*****"
+            - "*****"
+        # Example for a private gitlab server
+        gitlab.example.com:4567:
+          # If using https with an internal CA, ensure verify is pointing to it
+          protocol: 'https'
+          verify: "/etc/ssl/certs/ca-certificates.crt"
+          auth:
+            - "*****"
+            - "*****"
+        # Example for ECR Docker Repository
+        xxxxxxxxxxxxxxxx.dkr.ecr.eu-west-1.amazonaws.com:
+          token: "" # Execute this command to get token aws ecr get-authorization-token --output text --query 'authorizationData[].authorizationToken'
+          protocol: 'https'
+          token_type: Basic
 
 Plugins are dynamically loaded during execution. That's why you have to specify the class of the
 plugins you want to use.
