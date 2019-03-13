@@ -90,7 +90,7 @@ class AbstractClairRequests(LoggedObject):
         for feature, _ in self._iter_features(clair_json):
             for vuln in feature.get("vulnerabilities", []):
                 vuln = InsensitiveCaseDict(vuln)
-                if "fixedBy" in vuln:
+                if ("fixedBy" in vuln) or ("fixed_by" in vuln):
                     result[vuln["severity"]] = result.setdefault(vuln["severity"], 0) + 1
         return result
 
@@ -103,7 +103,7 @@ class AbstractClairRequests(LoggedObject):
         """
         clair_info = []
         for feature, added_by in self._iter_features(self.get_ancestry_json(ancestry)):
-            for vuln in feature.get("vulnerabilities", {}):
+            for vuln in feature.get("vulnerabilities", []):
                 vuln = InsensitiveCaseDict(vuln)
                 # metadata is a string in v3 and dict in v1
                 metadata = vuln.get("Metadata", {})
