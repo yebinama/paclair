@@ -2,6 +2,7 @@
 import json
 from abc import ABCMeta, abstractmethod
 from pkg_resources import resource_filename
+from bottle import template
 
 import requests
 
@@ -16,17 +17,18 @@ class AbstractClairRequests(LoggedObject):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, clair_url, cve_whitelist=[], verify=True, html_template=None):
+    def __init__(self, clair_url, cve_whitelist=None, verify=True, html_template=None):
         """
         Constructor
 
         :param clair_url: Clair api URL
+        :param cve_whitelist: cvs to whitelist
         :param verify: request verify certificate
         :param html_template: html template
         """
         super().__init__()
         self.url = clair_url
-        self.whitelist = cve_whitelist
+        self.whitelist = cve_whitelist or []
         self.verify = verify
         self.html_template = html_template or resource_filename(__name__, 'template/report.tpl')
 
@@ -85,7 +87,7 @@ class AbstractClairRequests(LoggedObject):
         """
         clair_json = self.get_ancestry_json(ancestry)
         result = {}
-        for feature in self._iter_features(clair_json):
+        for feature, _ in self._iter_features(clair_json):
             for vuln in feature.get("vulnerabilities", []):
                 vuln = InsensitiveCaseDict(vuln)
                 if "fixedBy" in vuln:
@@ -99,8 +101,32 @@ class AbstractClairRequests(LoggedObject):
         :param ancestry: ancestry (name) to analyse
         :return: html
         """
-        raise NotImplementedError("Implement in sub classes")
-
+        clair_info = []
+        for feature, added_by in self._iter_features(self.get_ancestry_json(ancestry)):
+            for vuln in feature.get("vulnerabilities", {}):
+                vuln = InsensitiveCaseDict(vuln)
+                # metadata is a string in v3 and dict in v1
+                metadata = vuln.get("Metadata", {})
+                if isinstance(metadata, str):
+                    try:
+                        metadata = json.loads(metadata)
+                    except ValueError:
+                        metadata = {}
+                cvss = metadata.get('NVD', {}).get("CVSSv2", {})
+                cvss_vector = self.split_vectors(cvss.get('Vectors', ""))
+                if vuln.get("Name") not in self.whitelist:
+                    clair_info.append({"ID": len(clair_info),
+                                       "CVE": vuln.get("Name"),
+                                       "SEVERITY": vuln.get("Severity"),
+                                       "PACKAGE": feature.get("Name"),
+                                       "CURRENT": feature.get("Version"),
+                                       "FIXED": vuln.get("fixed_by", None) or vuln.get("FixedBy", ""),
+                                       "INTRODUCED": added_by,
+                                       "DESCRIPTION": vuln.get("Description"),
+                                       "LINK": vuln.get("Link"),
+                                       "VECTORS": cvss_vector,
+                                       "SCORE": cvss.get("Score")})
+        return template(self.html_template, info=clair_info)
 
     @abstractmethod
     def post_ancestry(self, ancestry):
@@ -123,7 +149,7 @@ class AbstractClairRequests(LoggedObject):
     @abstractmethod
     def _iter_features(self, clair_json):
         """
-        Iterate over features from clair_json via CaseInsensitiveDict
+        Iterate over (features, introduced_by) from clair_json via CaseInsensitiveDict
 
         :param clair_json: json to iterate overs
         """
