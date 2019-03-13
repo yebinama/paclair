@@ -28,14 +28,14 @@ class TestClairRequestV3(unittest.TestCase):
         Test get_ancestry_json
         """
         # 404
-        m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("ubuntu"), status_code=404, reason="Not Found")
+        m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("debian"), status_code=404, reason="Not Found")
         with self.assertRaises(ResourceNotFoundException):
-            self.clair.get_ancestry_json("ubuntu")
+            self.clair.get_ancestry_json("debian")
 
-        with open(os.path.join(self.fixtures_dir, "ubuntu_v3.json")) as f:
-            m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("ubuntu"), status_code=200, json=json.load(f))
-        ancestry_json = self.clair.get_ancestry_json("ubuntu")
-        self.assertEqual(len(ancestry_json['ancestry']['features']), 60)
+        with open(os.path.join(self.fixtures_dir, "debian_v3.json")) as f:
+            m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("debian"), status_code=200, json=json.load(f))
+        ancestry_json = self.clair.get_ancestry_json("debian")
+        self.assertEqual(len(ancestry_json["ancestry"]["layers"][0]["detected_features"]), 141)
 
     @requests_mock.mock()
     def test_get_ancestry_statistics(self, m):
@@ -43,14 +43,14 @@ class TestClairRequestV3(unittest.TestCase):
         Test get_ancestry_statistics
         """
         # 404
-        m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("ubuntu"), status_code=404, reason="Not Found")
+        m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("debian"), status_code=404, reason="Not Found")
         with self.assertRaises(ResourceNotFoundException):
-            self.clair.get_ancestry_statistics("ubuntu")
+            self.clair.get_ancestry_statistics("debian")
 
-        with open(os.path.join(self.fixtures_dir, "ubuntu_v3.json")) as f:
-            m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("ubuntu"), status_code=200, json=json.load(f))
-        ancestry_stats = self.clair.get_ancestry_statistics("ubuntu")
-        self.assertDictEqual(ancestry_stats, {'High': 2, 'Low': 39, 'Medium': 19, 'Negligible': 16})
+        with open(os.path.join(self.fixtures_dir, "debian_v3.json")) as f:
+            m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("debian"), status_code=200, json=json.load(f))
+        ancestry_stats = self.clair.get_ancestry_statistics("debian")
+        self.assertDictEqual(ancestry_stats, {'High': 10, 'Low': 2, 'Medium': 7, 'Unknown': 1})
 
     @requests_mock.mock()
     def test_get_ancestry_html(self, m):
@@ -58,15 +58,15 @@ class TestClairRequestV3(unittest.TestCase):
         Test get_ancestry_html
         """
         # 404
-        m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("ubuntu"), status_code=404, reason="Not Found")
+        m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("debian"), status_code=404, reason="Not Found")
         with self.assertRaises(ResourceNotFoundException):
-            self.clair.get_ancestry_html("ubuntu")
+            self.clair.get_ancestry_html("debian")
 
-        with open(os.path.join(self.fixtures_dir, "ubuntu_v3.json")) as f:
-            m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("ubuntu"), status_code=200, json=json.load(f))
-        ancestry_html = self.clair.get_ancestry_html("ubuntu")
+        with open(os.path.join(self.fixtures_dir, "debian_v3.json")) as f:
+            m.get(self.clairURI + self.clair._CLAIR_ANALYZE_URI.format("debian"), status_code=200, json=json.load(f))
+        ancestry_html = self.clair.get_ancestry_html("debian")
 
-        with open(os.path.join(self.fixtures_dir, "ubuntu_v3.html")) as f:
+        with open(os.path.join(self.fixtures_dir, "debian_v3.html")) as f:
             expected = f.read()
             self.assertEqual(expected, ancestry_html)
 
