@@ -88,5 +88,5 @@ class ClairRequestsV1(AbstractClairRequests):
         return data
 
     def _iter_features(self, clair_json):
-        for feature in clair_json.get("Layer", {}).get("Features", {}):
+        for feature in clair_json.get("Layer", {}).get("Features", []):
             yield InsensitiveCaseDict(feature), feature.get("AddedBy")
