@@ -89,6 +89,7 @@ class ClairRequestsV1(AbstractClairRequests):
 
     def _iter_vulnerabilities(self, clair_json):
         for feature in clair_json.get("Layer", {}).get("Features", []):
+            feature = InsensitiveCaseDict(feature)
             for vuln in feature.get("Vulnerabilities", []):
                 if vuln.get("Name") not in self.whitelist:
-                    yield InsensitiveCaseDict(vuln), InsensitiveCaseDict(feature), feature.get("AddedBy")
+                    yield InsensitiveCaseDict(vuln), feature, feature.get("AddedBy")

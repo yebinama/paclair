@@ -8,7 +8,6 @@ import requests
 
 from paclair.exceptions import ResourceNotFoundException, ClairConnectionError
 from paclair.logged_object import LoggedObject
-from paclair.struct import InsensitiveCaseDict
 
 
 class AbstractClairRequests(LoggedObject):

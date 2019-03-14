@@ -53,6 +53,18 @@ class TestClairRequestV3(unittest.TestCase):
         self.assertDictEqual(ancestry_stats, {'High': 10, 'Low': 2, 'Medium': 7, 'Unknown': 1})
 
     @requests_mock.mock()
+    def test_get_ancestry_statistics_with_whitelist(self, m):
+        """
+        Test get_ancestry_statistics
+        """
+        clair = ClairRequestsV3(self.clairURI, cve_whitelist=['CVE-2018-16864', 'CVE-2019-3815'])
+
+        with open(os.path.join(self.fixtures_dir, "debian_v3.json")) as f:
+            m.get(self.clairURI + clair._CLAIR_ANALYZE_URI.format("debian"), status_code=200, json=json.load(f))
+        ancestry_stats = clair.get_ancestry_statistics("debian")
+        self.assertDictEqual(ancestry_stats, {'High': 10, 'Low': 1, 'Medium': 6, 'Unknown': 1})
+
+    @requests_mock.mock()
     def test_get_ancestry_html(self, m):
         """
         Test get_ancestry_html
