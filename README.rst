@@ -100,7 +100,7 @@ Options
 +-----------------------------------+-----------------------------------+
 | General::cve_whitelist            | CVE vulnerability list not to be  |
 |                                   | included in the report post       |
-|                                   | analysis.                         |
+|                                   | analysis (stats or html).         |
 +-----------------------------------+-----------------------------------+
 | Plugins                           | List of plugins to use. If you    |
 |                                   | only want to analyse docker       |
@@ -196,14 +196,14 @@ Push ubuntu image to Clair
     $ paclair --conf conf/conf.yml Docker ubuntu push
     Pushed ubuntu to Clair.
 
-Analyse ubuntu image
+Analyse ubuntu image (stats only show fixable CVE)
 
 .. code-block:: bash
 
     $ paclair --conf conf/conf.yml Docker ubuntu analyse --output-format stats
     Medium: 3
 
-You can have the full json if you don't specify --output-format stats
+You can have the full json if you don't specify --output-format stats.
 
 
 Analyse ubuntu image and get a html report in directory /tmp
