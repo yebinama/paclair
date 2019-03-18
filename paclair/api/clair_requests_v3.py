@@ -42,6 +42,10 @@ class ClairRequestsV3(AbstractClairRequests):
         """
         raise PaclairException("Delete is not available for V3 api")
 
-    def _iter_features(self, clair_json):
-        for feature in clair_json.get("ancestry", {}).get("features", {}):
-            yield InsensitiveCaseDict(feature)
+    def _iter_vulnerabilities(self, clair_json):
+        for layer in clair_json.get("ancestry", {}).get("layers", []):
+            for feature in layer.get("detected_features", []):
+                feature = InsensitiveCaseDict(feature)
+                for vuln in feature.get("vulnerabilities", []):
+                    if vuln.get("name") not in self.whitelist:
+                        yield InsensitiveCaseDict(vuln), feature, layer.get("layer").get("hash")

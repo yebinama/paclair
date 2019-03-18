@@ -73,6 +73,18 @@ class TestClairRequestV1(unittest.TestCase):
         self.assertDictEqual(ancestry_stats, {'Medium': 1, 'High': 1, 'Low': 1})
 
     @requests_mock.mock()
+    def test_get_ancestry_statistics_with_whitelist(self, m):
+        """
+        Test get_ancestry_statistics
+        """
+        clair = ClairRequestsV1(self.clairURI, cve_whitelist=['CVE-2017-9445', 'CVE-2017-9217'])
+
+        with open(os.path.join(self.fixtures_dir, "ubuntu_v1.json")) as f:
+            m.get(self.clairURI + clair._CLAIR_ANALYZE_URI.format("ubuntu"), status_code=200, json=json.load(f))
+        ancestry_stats = clair.get_ancestry_statistics("ubuntu")
+        self.assertDictEqual(ancestry_stats, {'Medium': 1})
+
+    @requests_mock.mock()
     def test_get_ancestry_html(self, m):
         """
         Test get_ancestry_html
@@ -103,6 +115,7 @@ class TestClairRequestV1(unittest.TestCase):
         self.clair._request.assert_any_call('POST', self.clair._CLAIR_POST_URI,
                                             json={'Layer': {'Name': 'bbbbb', 'Path': 'path_bbbbb', 'Format': 'Docker',
                                                             'ParentName': 'aaaaa'}})
+
     def test_delete_ancestry(self):
         """
         Test delete_ancestry

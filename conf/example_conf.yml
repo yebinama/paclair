@@ -1,5 +1,11 @@
 General:
   clair_url: 'https://localhost:6060'
+  # clair_api_version: 3
+  # Whitelist known CVE's not to shown in html report
+  # cve_whitelist:
+  #   - CVE-2016-9843
+  #   - CVE-2016-9840
+  #   - CVE-2016-6313
 Plugins:
   Docker:
     class: paclair.plugins.docker_plugin.DockerPlugin
@@ -20,3 +26,8 @@ Plugins:
         auth:
           - "*****"
           - "*****"
+      # Example for ECR Docker Repository
+      xxxxxxxxxxxxxxxx.dkr.ecr.eu-west-1.amazonaws.com:
+        token: "" # Execute this command to get token aws ecr get-authorization-token --output text --query 'authorizationData[].authorizationToken'
+        protocol: 'https'
+        token_type: Basic

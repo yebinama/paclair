@@ -87,6 +87,9 @@ class ClairRequestsV1(AbstractClairRequests):
         data["Layer"].update(kwargs)
         return data
 
-    def _iter_features(self, clair_json):
-        for feature in clair_json.get("Layer", {}).get("Features", {}):
-            yield InsensitiveCaseDict(feature)
+    def _iter_vulnerabilities(self, clair_json):
+        for feature in clair_json.get("Layer", {}).get("Features", []):
+            feature = InsensitiveCaseDict(feature)
+            for vuln in feature.get("Vulnerabilities", []):
+                if vuln.get("Name") not in self.whitelist:
+                    yield InsensitiveCaseDict(vuln), feature, feature.get("AddedBy")
