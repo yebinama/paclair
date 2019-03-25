@@ -7,7 +7,7 @@ with open('README.rst', 'r', 'utf-8') as f:
     readme = f.read()
 
 setup(name="paclair",
-      version="3.1.1",
+      version="3.2.0",
       description="Push and Analyse containers with Clair",
       long_description=readme,
       author="Grégoire UNBEKANDT",
