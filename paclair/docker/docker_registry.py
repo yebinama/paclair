@@ -122,7 +122,7 @@ class DockerRegistry(LoggedObject):
                 raise RegistryAccessError("Error access to : {url} \nCode Error : {status_code}".format(
                     url=url, status_code=resp.status_code))
 
-            token = resp.json()['token']
+            token = resp.json().get('token', '') or resp.json().get('access_token', '')
             self.logger.debug("TOKEN:{token}".format(token=token))
         else:
             token = self.__token
