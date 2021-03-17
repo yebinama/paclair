@@ -144,7 +144,9 @@ class DockerRegistry(LoggedObject):
         resp = requests.get(
             url,
             verify=self.verify,
-            headers={"Authorization": "{}".format(token)}
+            headers={
+                "Accept": "application/vnd.docker.distribution.manifest.v2+json",
+                "Authorization": "{}".format(token)}
         )
 
         if not resp.ok:
